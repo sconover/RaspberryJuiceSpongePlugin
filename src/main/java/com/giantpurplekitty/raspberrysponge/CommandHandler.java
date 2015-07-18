@@ -1,23 +1,111 @@
 package com.giantpurplekitty.raspberrysponge;
 
+import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 public class CommandHandler {
   private final ServerWrapper serverWrapper;
   private final Logger logger;
-  private final RemoteSession.ToOutQueue toOutQueue;
+  private final RemoteSession.Out out;
+
+  //private final ArrayDeque<BlockRightClickHook> blockHitQueue =
+  //    new ArrayDeque<BlockRightClickHook>();
+
+  // TODO: isolate all of this reflection stuff, make it more robust, test reporting of errors and failures and misconfigurations, etc
+  private final Map<Pair<String, Integer>, Pair<Object, Method>>
+      apiMethodNameAndParameterCountToApiObjectAndMethod =
+      new LinkedHashMap<Pair<String, Integer>, Pair<Object, Method>>();
+  private final Map<String, Pair<Object, Method>>
+      apiMethodNameAcceptingRawArgStringToApiObjectAndMethod =
+      new LinkedHashMap<String, Pair<Object, Method>>();
 
   public CommandHandler(
       ServerWrapper serverWrapper,
       Logger logger,
-      RemoteSession.ToOutQueue toOutQueue) { // TODO: move ToOutQueue to top level
+      RemoteSession.Out out) { // TODO: move ToOutQueue to top level
 
     this.serverWrapper = serverWrapper;
     this.logger = logger;
-    this.toOutQueue = toOutQueue;
+    this.out = out;
+
+    //registerApiMethods(new OriginalApi(serverWrapper, blockHitQueue, logman));
+    //registerApiMethods(new ExtendedApi(serverWrapper, logman));
   }
 
-  public void handleLine(String message) {
-    // blah
+  private void registerApiMethods(Object api) {
+    for (Method m : api.getClass().getMethods()) {
+      if (m.isAnnotationPresent(RPC.class)) {
+        String apiMethodName = m.getDeclaredAnnotation(RPC.class).value();
+
+        if (m.getParameterAnnotations().length == 1 &&
+            m.getParameterAnnotations()[0].getClass().equals(RawArgString.class)) {
+          apiMethodNameAcceptingRawArgStringToApiObjectAndMethod.put(
+              apiMethodName,
+              ImmutablePair.of(api, m));
+        } else {
+          apiMethodNameAndParameterCountToApiObjectAndMethod.put(
+              ImmutablePair.of(apiMethodName, m.getParameterCount()),
+              ImmutablePair.of(api, m));
+        }
+      }
+    }
+  }
+
+  public void handleLine(String line) {
+    //System.out.println(line);
+    String methodName = line.substring(0, line.indexOf("("));
+    //split string into args, handles , inside " i.e. ","
+    String rawArgStr = line.substring(line.indexOf("(") + 1, line.length() - 1);
+    String[] args = rawArgStr.equals("") ? new String[] {} : rawArgStr.split(",");
+    //System.out.println(methodName + ":" + Arrays.toString(args));
+    handleCommand(methodName, args, rawArgStr);
+  }
+
+  protected void handleCommand(String c, String[] args, String rawArgStr) {
+
+    try {
+      Pair<String, Integer> key = ImmutablePair.of(c, args.length);
+
+      Object apiObject = null;
+      Method method = null;
+      Object[] convertedArgs = null;
+
+      if (apiMethodNameAcceptingRawArgStringToApiObjectAndMethod.containsKey(c)) {
+        Pair<Object, Method> apiObjectAndMethod =
+            apiMethodNameAcceptingRawArgStringToApiObjectAndMethod.get(c);
+        apiObject = apiObjectAndMethod.getLeft();
+        method = apiObjectAndMethod.getRight();
+
+        convertedArgs = new String[] {rawArgStr};
+      } else if (apiMethodNameAndParameterCountToApiObjectAndMethod.containsKey(key)) {
+        Pair<Object, Method> apiObjectAndMethod =
+            apiMethodNameAndParameterCountToApiObjectAndMethod.get(key);
+        apiObject = apiObjectAndMethod.getLeft();
+        method = apiObjectAndMethod.getRight();
+
+        convertedArgs = ApiIO.convertArguments(args, method);
+      }
+
+      if (method != null) {
+        if (method.getReturnType().equals(Void.TYPE)) {
+          method.invoke(apiObject, convertedArgs);
+        } else {
+          out.send(ApiIO.serializeResult(method.invoke(apiObject, convertedArgs)));
+        }
+        return;
+      }
+
+      logger.warn(c + " is not supported.");
+      out.send("Fail");
+    } catch (Exception e) {
+
+      logger.warn("Error occured handling command");
+      e.printStackTrace();
+      out.send("Fail");
+    }
   }
 }
