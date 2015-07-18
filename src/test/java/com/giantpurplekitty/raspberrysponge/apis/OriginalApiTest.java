@@ -1,6 +1,8 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.apis;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.giantpurplekitty.raspberrysponge.FileHelper;
+import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.spongepowered.api.block.BlockTypes;

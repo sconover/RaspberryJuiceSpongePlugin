@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge.server;
+package com.giantpurplekitty.raspberrysponge.raspberryserver;
 
 import java.net.Socket;
 import java.util.ArrayList;

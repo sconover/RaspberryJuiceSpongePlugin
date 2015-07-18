@@ -1,7 +1,7 @@
 package com.giantpurplekitty.raspberrysponge;
 
-import com.giantpurplekitty.raspberrysponge.server.RemoteSessionsManager;
-import com.giantpurplekitty.raspberrysponge.server.ServerListenerThread;
+import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSessionsManager;
+import com.giantpurplekitty.raspberrysponge.raspberryserver.ServerListenerThread;
 import java.net.InetSocketAddress;
 import javax.inject.Inject;
 import org.slf4j.Logger;

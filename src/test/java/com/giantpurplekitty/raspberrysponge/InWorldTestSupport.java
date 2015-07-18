@@ -2,10 +2,10 @@ package com.giantpurplekitty.raspberrysponge;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.ApiInvocationHandler;
-import com.giantpurplekitty.raspberrysponge.manipulation.CuboidReference;
-import com.giantpurplekitty.raspberrysponge.manipulation.LocationHelper;
-import com.giantpurplekitty.raspberrysponge.manipulation.ServerWrapper;
-import com.giantpurplekitty.raspberrysponge.server.RemoteSession;
+import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
+import com.giantpurplekitty.raspberrysponge.game.LocationHelper;
+import com.giantpurplekitty.raspberrysponge.game.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import java.util.ArrayDeque;
 import org.junit.Before;
 import org.slf4j.Logger;

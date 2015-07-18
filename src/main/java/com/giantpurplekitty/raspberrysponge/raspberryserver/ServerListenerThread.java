@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge.server;
+package com.giantpurplekitty.raspberrysponge.raspberryserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
