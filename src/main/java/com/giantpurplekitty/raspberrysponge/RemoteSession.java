@@ -40,7 +40,7 @@ public class RemoteSession {
     RemoteSession remoteSession = new RemoteSession(
         logger,
         toOutQueue,
-        new CommandHandler(new ServerWrapper(game), logger, toOutQueue),
+        new CommandHandler(new ServerWrapper(game.getServer()), logger, toOutQueue),
         socket);
     remoteSession.init();
     return remoteSession;

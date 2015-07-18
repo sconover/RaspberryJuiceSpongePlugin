@@ -42,6 +42,9 @@ public class RaspberryJuiceTestRunnerPlugin {
   @Subscribe
   public void onServerStarting(ServerStartingEvent event) {
     event.getGame().getCommandDispatcher().register(this, new TestCommand(), "test");
+
+    InWorldTestSupport.game = event.getGame();
+    InWorldTestSupport.logger = logger;
   }
 
   public class TestCommand implements CommandCallable {

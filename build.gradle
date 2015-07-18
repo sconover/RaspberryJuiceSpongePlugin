@@ -3,6 +3,7 @@ defaultTasks 'clean', 'build'
 
 //// Plugins used
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 //apply plugin: 'net.glowstone.mixins'
 
@@ -42,6 +43,7 @@ repositories {
 // Dependencies used by our project
 dependencies {
   compile 'org.spongepowered:spongeapi:1.0'
+  compile 'commons-io:commons-io:2.4'
 //  compile 'org.slf4j:slf4j-jdk14:1.7.7'
   testCompile 'junit:junit:4.8.1'
 }

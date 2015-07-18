@@ -1,17 +1,6 @@
 package com.giantpurplekitty.raspberrysponge;
 
-//import com.stuffaboutcode.canaryraspberryjuice.CuboidReference;
-//import com.stuffaboutcode.canaryraspberryjuicetest.support.FileHelper;
-//import com.stuffaboutcode.canaryraspberryjuicetest.support.InWorldTestSupport;
-//import net.canarymod.api.entity.living.humanoid.Player;
-//import net.canarymod.api.inventory.ItemType;
-//import net.canarymod.api.world.blocks.Block;
-//import net.canarymod.api.world.blocks.BlockType;
-//import net.canarymod.api.world.position.Position;
-//import net.canarymod.hook.player.BlockRightClickHook;
-
 import org.junit.Test;
-import org.spongepowered.api.Game;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -34,12 +23,6 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_works() {
     System.out.println("HELLO FROM WORKS");
     assertEquals(1, 1);
-  }
-
-  @Test
-  public void test_fails() {
-    System.out.println("HELLO FROM FAILS");
-    assertEquals(2, 1);
   }
 
   @Test
