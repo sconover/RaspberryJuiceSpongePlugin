@@ -10,7 +10,7 @@ import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.scheduler.TaskBuilder;
 
-@Plugin(id = "raspberry-juice-sponge-plugin", name = "RaspberryJuiceSpongePlugin", version = "0.1")
+@Plugin(id = "RaspberryJuiceSpongePlugin", name = "RaspberryJuiceSpongePlugin", version = "0.1")
 public class RaspberryJuiceSpongePlugin {
 
   private final Game game;
@@ -58,18 +58,6 @@ public class RaspberryJuiceSpongePlugin {
       logger.warn("Failed to start ThreadListener");
     }
   }
-
-  //@SubscribeEvent
-  //public void onTick(TickEvent.ServerTickEvent event) {
-  //  if (event.phase == TickEvent.Phase.START) {
-  //    SpongeScheduler.getInstance().tickSyncScheduler();
-  //  }
-  //}
-  //
-  //@Subscribe
-  //public void onTick(TickEvent event) {
-  //
-  //}
 
   @Subscribe
   public void onServerStopping(ServerStoppingEvent event) {

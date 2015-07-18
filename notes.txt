@@ -27,6 +27,11 @@ git submodule update --init --recursive
   Run the server again. It should start successfully.
 
 
+Test directory is intenionally marked as a source root, not a test root, in intellij,
+because we want Sponge to pick up the RaspberryJuiceTestRunnerPlugin as a plugin
+for when we run the server within the IDE (and are doing development),
+but still want directory separation for gradle build purposes.
+
 gpk site
   devs/admins
     code / contribution focused
