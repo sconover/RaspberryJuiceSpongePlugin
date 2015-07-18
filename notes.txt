@@ -1,0 +1,28 @@
+Running the Sponge server
+
+1) git clone all sponge code
+git submodule update --init --recursive
+
+2) open
+  submodules/Sponge.iml
+  submodules/SpongeCommon/SpongeCommon.iml
+  submodules/SpongeCommon/SpongeAPI/SpongeAPI.iml
+
+  as intellij modules
+
+3) In the Intellij Gradle tab,
+  a) run Sponge > forgeGradle > setupDecompWorkspace
+  b) click the "Refresh all Gradle projects" icon
+
+4) Create the top-level directory structure: "target/server-root"
+
+5) Create a run target for
+  class: GradleStartServer
+  vmoptions: -Dfml.coreMods.load=org.spongepowered.mod.SpongeCoremod
+  working dir: abosolute path of 'target/server-root'
+  Use classpath of module: Sponge
+
+6) Run this, it will fail to start because of eula.txt.
+  Open target/server-root/eula.txt and follow the instructions.
+  Run the server again. It should start successfully.
+

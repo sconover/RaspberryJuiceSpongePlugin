@@ -1,0 +1,64 @@
+// Tasks to perform when no task is specified
+defaultTasks 'clean', 'build'
+
+//// Plugins used
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'net.glowstone.mixins'
+
+// Basic project information
+group = 'com.giantpurplekitty'
+version = '0.0.1-SNAPSHOT'
+description = "RaspberryJuiceSpongePLugin"
+
+// Buildscript settings
+buildscript {
+  repositories {
+    jcenter()
+//    maven { url "http://repo.glowstone.net/content/groups/public/" }
+  }
+  dependencies {
+    classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+//    classpath 'net.glowstone:mixins:1.0'
+//    classpath 'org.ow2.asm:asm:5.0.3'
+  }
+}
+
+// Compiler settings
+compileJava {
+  sourceCompatibility = '1.6'
+  targetCompatibility = '1.6'
+  options.encoding = 'UTF-8'
+}
+
+// Repositories storing our dependencies
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "http://repo.spongepowered.org/Sponge/maven/" }
+}
+
+// Dependencies used by our project
+dependencies {
+  compile 'org.spongepowered:spongeapi:1.0'
+//  compile 'org.slf4j:slf4j-jdk14:1.7.7'
+  testCompile 'junit:junit:4.8.1'
+}
+
+//mixin {
+//  mappingFile = file('mixins.txt')
+//  inputTask = shadowJar
+//}
+
+// Jar manifest information
+jar.manifest.mainAttributes(
+        'Main-Class': 'com.giantpurplekitty.raspberrysponge.Main',
+        'Implementation-Title': description,
+        'Implementation-Version': version,
+        'Implementation-Vendor': 'http://www.giantpurplekitty.com',
+        'Specification-Title': 'SpongeAPI',
+        'Specification-Version': '1.0.0-SNAPSHOT',
+        'Specification-Vendor': 'http://spongepowered.org',
+        'Sealed': true
+)
