@@ -26,11 +26,19 @@ public class RaspberryJuiceTestRunnerPlugin {
   public void onServerStarting(ServerStartingEvent event) {
     System.out.println("XXXXXXX REGISTERING COMMAND");
     event.getGame().getCommandDispatcher().register(this, new TestCommand(), "testfoo");
+
+    Optional<CommandResult> testfoo = event.getGame()
+        .getCommandDispatcher()
+        .process(event.getGame().getServer().getConsole(), "testfoo");
+    System.out.println(testfoo);
   }
 
   public class TestCommand implements CommandCallable {
     public Optional<CommandResult> process(CommandSource commandSource, String arguments)
         throws CommandException {
+      System.out.println("YYYYYYYY I GOT CALLED");
+      System.out.println("YYYYYYYY I GOT CALLED");
+      System.out.println("YYYYYYYY I GOT CALLED");
       return Optional.absent();
     }
 
