@@ -32,6 +32,7 @@ import org.spongepowered.api.util.command.CommandSource;
 @Plugin(id = "RaspberryJuiceTestRunnerPlugin", name = "RaspberryJuiceTestRunnerPlugin", version = "0.1")
 public class RaspberryJuiceTestRunnerPlugin {
 
+  public static final String TEST_CLASSES_COMPILE_PATH = "../../target/classes";
   private final Logger logger;
 
   @Inject
@@ -42,6 +43,7 @@ public class RaspberryJuiceTestRunnerPlugin {
   @Subscribe
   public void onServerStarting(ServerStartingEvent event) {
     event.getGame().getCommandDispatcher().register(this, new TestCommand(), "test");
+    event.getGame().getCommandDispatcher().register(this, new TCommand(), "t");
 
     InWorldTestSupport.game = event.getGame();
     InWorldTestSupport.logger = logger;
@@ -51,7 +53,7 @@ public class RaspberryJuiceTestRunnerPlugin {
     public Optional<CommandResult> process(CommandSource commandSource, String arguments)
         throws CommandException {
 
-      ClassesAndClassesAndMethods classesAndClassesAndMethods = scanDir("../../target/classes");
+      ClassesAndClassesAndMethods classesAndClassesAndMethods = scanDir(TEST_CLASSES_COMPILE_PATH);
 
       Request request = null;
       if (!arguments.isEmpty()) {
@@ -85,15 +87,71 @@ public class RaspberryJuiceTestRunnerPlugin {
     }
 
     public Optional<? extends Text> getShortDescription(CommandSource commandSource) {
-      return Optional.of(Texts.of("foo description"));
+      return Optional.of(Texts.of("Run one or more tests."));
     }
 
     public Optional<? extends Text> getHelp(CommandSource commandSource) {
-      return Optional.of(Texts.of("foo help"));
+      return Optional.of(Texts.of(
+          "Run one or more tests. " +
+          "Zero arguments runs all tests. " +
+          "Optional argument is used to search for either a test class or method, " +
+          "to run in isolation."));
     }
 
     public Text getUsage(CommandSource commandSource) {
-      return Texts.of("/test");
+      return Texts.of("/test [test class or method name]");
+    }
+  }
+
+  public class TCommand implements CommandCallable {
+    public Optional<CommandResult> process(CommandSource commandSource, String arguments)
+        throws CommandException {
+
+      logger.info(String.format("Last test run is '%s'", getLastTest()));
+
+      ClassesAndClassesAndMethods classesAndClassesAndMethods = scanDir(TEST_CLASSES_COMPILE_PATH);
+
+      Request request = null;
+      if (getLastTest() == null) {
+        request = Request.classes(
+            classesAndClassesAndMethods.classes.toArray(
+                new Class[classesAndClassesAndMethods.classes.size()]));
+      } else {
+        request = junitRequestFromSearchString(getLastTest(), classesAndClassesAndMethods);
+        if (request == null) {
+          logger.info(String.format("'%s' not found.", getLastTest()));
+          return Optional.of(CommandResult.empty());
+        }
+      }
+
+      JUnitCore runner = new JUnitCore();
+      runner.addListener(new TestRunListener(logger));
+      runner.run(request);
+
+      return Optional.of(CommandResult.success());
+    }
+
+    public List<String> getSuggestions(CommandSource commandSource, String arguments)
+        throws CommandException {
+      return new ArrayList<String>();
+    }
+
+    public boolean testPermission(CommandSource commandSource) {
+      return true;
+    }
+
+    public Optional<? extends Text> getShortDescription(CommandSource commandSource) {
+      return Optional.of(Texts.of("Run the previously-run test or tests, or all tests."));
+    }
+
+    public Optional<? extends Text> getHelp(CommandSource commandSource) {
+      return Optional.of(Texts.of(
+          "Runs the previously-run /test invocation, " +
+              "or if this is the first invocation, run all tests."));
+    }
+
+    public Text getUsage(CommandSource commandSource) {
+      return Texts.of("/t");
     }
   }
 
