@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge;
 
+import com.giantpurplekitty.raspberrysponge.apis.OriginalApi;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,7 +8,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
-public class CommandHandler {
+public class ApiInvocationHandler {
   private final ServerWrapper serverWrapper;
   private final Logger logger;
   private final RemoteSession.Out out;
@@ -23,7 +24,7 @@ public class CommandHandler {
       apiMethodNameAcceptingRawArgStringToApiObjectAndMethod =
       new LinkedHashMap<String, Pair<Object, Method>>();
 
-  public CommandHandler(
+  public ApiInvocationHandler(
       ServerWrapper serverWrapper,
       Logger logger,
       RemoteSession.Out out) { // TODO: move ToOutQueue to top level
@@ -32,7 +33,7 @@ public class CommandHandler {
     this.logger = logger;
     this.out = out;
 
-    //registerApiMethods(new OriginalApi(serverWrapper, blockHitQueue, logman));
+    registerApiMethods(new OriginalApi(serverWrapper, logger));
     //registerApiMethods(new ExtendedApi(serverWrapper, logman));
   }
 

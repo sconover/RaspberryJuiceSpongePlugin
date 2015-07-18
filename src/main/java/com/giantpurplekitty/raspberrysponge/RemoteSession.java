@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 
 public class RemoteSession {
-  private final CommandHandler commandHandler;
+  private final ApiInvocationHandler apiInvocationHandler;
   private final Logger logger;
 
   private Socket socket;
@@ -40,17 +40,17 @@ public class RemoteSession {
     RemoteSession remoteSession = new RemoteSession(
         logger,
         toOutQueue,
-        new CommandHandler(new ServerWrapper(game.getServer()), logger, toOutQueue),
+        new ApiInvocationHandler(new ServerWrapper(game.getServer()), logger, toOutQueue),
         socket);
     remoteSession.init();
     return remoteSession;
   }
 
-  public RemoteSession(Logger logger, ToOutQueue toOutQueue, CommandHandler commandHandler,
+  public RemoteSession(Logger logger, ToOutQueue toOutQueue, ApiInvocationHandler apiInvocationHandler,
       Socket socket) {
     this.logger = logger;
     this.toOutQueue = toOutQueue;
-    this.commandHandler = commandHandler;
+    this.apiInvocationHandler = apiInvocationHandler;
     this.socket = socket;
   }
 
@@ -84,7 +84,7 @@ public class RemoteSession {
     int processedCount = 0;
     String message;
     while ((message = inQueue.poll()) != null) {
-      commandHandler.handleLine(message);
+      apiInvocationHandler.handleLine(message);
       processedCount++;
       if (processedCount >= maxCommandsPerTick) {
         logger.warn("Over " + maxCommandsPerTick +

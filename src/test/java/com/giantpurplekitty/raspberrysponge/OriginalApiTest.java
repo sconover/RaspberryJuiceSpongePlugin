@@ -29,7 +29,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_chat_post() throws Exception {
     String chatMessage = String.format("this-is-the-chat-message-%d", System.currentTimeMillis());
 
-    getCommandHandler().handleLine(String.format("chat.post(%s)", chatMessage));
+    getApiInvocationHandler().handleLine(String.format("chat.post(%s)", chatMessage));
 
     String last20LinesOfLogFile = FileHelper.readEndOfLogfile();
 

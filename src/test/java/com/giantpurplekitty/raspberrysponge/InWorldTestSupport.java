@@ -44,7 +44,7 @@ public abstract class InWorldTestSupport {
   private ServerWrapper serverWrapper;
   //private static int xOffset = 2;
   private TestOut testOut;
-  private CommandHandler commandHandler;
+  private ApiInvocationHandler apiInvocationHandler;
   //private CanaryRaspberryJuiceListener pluginListener;
   //
   public ServerWrapper getServerWrapper() {
@@ -55,8 +55,8 @@ public abstract class InWorldTestSupport {
     return testOut;
   }
 
-  public CommandHandler getCommandHandler() {
-    return commandHandler;
+  public ApiInvocationHandler getApiInvocationHandler() {
+    return apiInvocationHandler;
   }
   //
   //public CanaryRaspberryJuiceListener getPluginListener() {
@@ -76,7 +76,7 @@ public abstract class InWorldTestSupport {
 
     testOut = new TestOut();
 
-    commandHandler = new CommandHandler(
+    apiInvocationHandler = new ApiInvocationHandler(
         serverWrapper,
         logger,
         testOut);
