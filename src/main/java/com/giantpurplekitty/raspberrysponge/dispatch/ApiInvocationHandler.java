@@ -1,6 +1,8 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.dispatch;
 
+import com.giantpurplekitty.raspberrysponge.server.RemoteSession;
 import com.giantpurplekitty.raspberrysponge.apis.OriginalApi;
+import com.giantpurplekitty.raspberrysponge.manipulation.ServerWrapper;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.manipulation;
 
 /**
  * A point in 3d space relative to "object".

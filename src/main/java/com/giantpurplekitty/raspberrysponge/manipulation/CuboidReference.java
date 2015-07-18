@@ -1,9 +1,7 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.manipulation;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
-import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -74,7 +72,7 @@ public class CuboidReference {
     for (int x = 0; x < xSize; x++) {
       for (int y = 0; y < ySize; y++) {
         for (int z = 0; z < zSize; z++) {
-          result[x][y][z] = corner.getRelative(Direction.getClosest(new Vector3d(x, y, z)));
+          result[x][y][z] = corner.add(x, y, z);
         }
       }
     }

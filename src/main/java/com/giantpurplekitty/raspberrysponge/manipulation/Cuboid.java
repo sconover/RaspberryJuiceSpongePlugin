@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.manipulation;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;

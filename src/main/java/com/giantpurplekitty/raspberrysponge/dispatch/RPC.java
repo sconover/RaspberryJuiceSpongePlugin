@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge;
+package com.giantpurplekitty.raspberrysponge.dispatch;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

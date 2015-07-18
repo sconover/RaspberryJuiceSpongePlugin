@@ -1,10 +1,10 @@
 package com.giantpurplekitty.raspberrysponge.apis;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.giantpurplekitty.raspberrysponge.CuboidReference;
-import com.giantpurplekitty.raspberrysponge.RPC;
-import com.giantpurplekitty.raspberrysponge.RawArgString;
-import com.giantpurplekitty.raspberrysponge.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.manipulation.CuboidReference;
+import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
+import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
+import com.giantpurplekitty.raspberrysponge.manipulation.ServerWrapper;
 import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockType;
 

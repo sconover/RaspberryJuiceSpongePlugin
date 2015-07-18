@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge;
 
+import com.giantpurplekitty.raspberrysponge.server.RemoteSession;
 import java.util.ArrayList;
 import java.util.List;
 
