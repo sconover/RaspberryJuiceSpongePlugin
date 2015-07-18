@@ -1,9 +1,12 @@
 package com.giantpurplekitty.raspberrysponge.apis;
 
+import com.flowpowered.math.vector.Vector3i;
+import com.giantpurplekitty.raspberrysponge.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.RPC;
 import com.giantpurplekitty.raspberrysponge.RawArgString;
 import com.giantpurplekitty.raspberrysponge.ServerWrapper;
 import org.slf4j.Logger;
+import org.spongepowered.api.block.BlockType;
 
 public class OriginalApi {
   private final ServerWrapper serverWrapper;
@@ -19,13 +22,13 @@ public class OriginalApi {
     this.logger = logger;
   }
 
-  //@RPC("world.getBlock")
-  //public BlockType world_getBlock(int x, int y, int z) {
-  //  return CuboidReference.relativeTo(getOrigin(), new Position(x, y, z))
-  //      .fetchBlocks(serverWrapper.getWorld())
-  //      .firstBlock()
-  //      .getType();
-  //}
+  @RPC("world.getBlock")
+  public BlockType world_getBlock(int x, int y, int z) {
+    return CuboidReference.relativeTo(getOrigin(), new Vector3i(x, y, z))
+        .fetchBlocks(serverWrapper.getWorld())
+        .firstBlock()
+        .getBlockType();
+  }
   //
   //@RPC("world.getBlockWithData")
   //public Pair<BlockType, Short> world_setBlockWithData(int x, int y, int z) {
@@ -224,9 +227,9 @@ public class OriginalApi {
   //  return serverWrapper.getEntityById(entityId).getRotation();
   //}
   //
-  //private Position getOrigin() {
-  //  return serverWrapper.getSpawnPosition();
-  //}
+  private Vector3i getOrigin() {
+    return serverWrapper.getSpawnPosition();
+  }
   //
   //private Vector3D getEntityDirection(Entity entity) {
   //  return calculateDirection(entity.getPitch(), entity.getRotation());

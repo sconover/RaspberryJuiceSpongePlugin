@@ -1,6 +1,7 @@
 package com.giantpurplekitty.raspberrysponge;
 
 import java.lang.reflect.Method;
+import org.spongepowered.api.block.BlockType;
 
 public class ApiIO {
   public static Object[] convertArguments(String[] args, Method m) {
@@ -32,8 +33,9 @@ public class ApiIO {
   }
 
   public static String serializeResult(Object objectResult) {
-    //if (objectResult instanceof BlockType) {
-    //  return String.valueOf(((BlockType) objectResult).getId());
+    if (objectResult instanceof BlockType) {
+      return String.valueOf(((BlockType) objectResult).getId());
+    }
     //} else if (objectResult instanceof BlockType[]) {
     //  BlockType[] blockTypes = (BlockType[]) objectResult;
     //  String[] strings = new String[blockTypes.length];

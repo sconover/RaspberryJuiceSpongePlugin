@@ -1,6 +1,10 @@
 package com.giantpurplekitty.raspberrysponge;
 
+import com.flowpowered.math.vector.Vector3i;
+import com.google.common.collect.Lists;
 import org.junit.Test;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.world.Location;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -39,26 +43,31 @@ public class OriginalApiTest extends InWorldTestSupport {
             last20LinesOfLogFile),
         last20LinesOfLogFile.contains(chatMessage));
   }
-  //
-  //@Test
-  //public void test_world_getBlock() throws Exception {
-  //  Position p = nextTestPosition("world.getBlock");
-  //
-  //  Block block = getServerWrapper().getWorld().getBlockAt(p);
-  //  block.setType(BlockType.RedstoneBlock);
-  //  block.update();
-  //
-  //  getCommandHandler().handleLine(
-  //      String.format("world.getBlock(%d,%d,%d)",
-  //          (int) p.getX(),
-  //          (int) p.getY(),
-  //          (int) p.getZ()));
-  //
-  //  assertEquals(
-  //      Lists.newArrayList(String.valueOf(BlockType.RedstoneBlock.getId())),
-  //      getTestOut().sends);
-  //}
-  //
+
+  @Test
+  public void test_world_getBlock() throws Exception {
+    //Position p = nextTestPosition("world.getBlock");
+
+    Vector3i p = getServerWrapper().getSpawnPosition();
+
+    Location block = new Location(getServerWrapper().getWorld(),
+        p.getX()+3, p.getY()+3, p.getZ()+3);
+    block.setBlockType(BlockTypes.REDSTONE_BLOCK);
+
+    // sanity check
+    assertEquals(
+        BlockTypes.REDSTONE_BLOCK,
+        new Location(getServerWrapper().getWorld(),
+            p.getX()+3, p.getY()+3, p.getZ()+3).getBlockType());
+
+    getApiInvocationHandler().handleLine(
+        String.format("world.getBlock(%d,%d,%d)", 3, 3, 3));
+
+    assertEquals(
+        Lists.newArrayList(String.valueOf(BlockTypes.REDSTONE_BLOCK.getId())),
+        getTestOut().sends);
+  }
+
   //@Test
   //public void test_world_getBlockWithData() throws Exception {
   //  Position p = nextTestPosition("world.getBlockWithData");
@@ -71,7 +80,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  block2.setType(BlockType.LimeWool);
   //  block2.update();
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.getBlockWithData(%d,%d,%d)",
   //          (int) p.getX(),
   //          (int) p.getY(),
@@ -83,7 +92,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //          BlockType.RedstoneBlock.getData()),
   //      getTestOut().sends.get(0));
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.getBlockWithData(%d,%d,%d)",
   //          (int) p.getX() + 1,
   //          (int) p.getY(),
@@ -100,7 +109,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //public void test_world_setBlock() throws Exception {
   //  Position p = nextTestPosition("world.setBlock");
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.setBlock(%d,%d,%d,%d)",
   //          (int) p.getX(),
   //          (int) p.getY(),
@@ -110,7 +119,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  Block block = getServerWrapper().getWorld().getBlockAt(p);
   //  assertEquals(BlockType.RedstoneBlock, block.getType());
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.setBlock(%d,%d,%d,%d,%d)",
   //          (int) p.getX() + 1,
   //          (int) p.getY(),
@@ -137,7 +146,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //          cubeCorner.getY() + 1,
   //          cubeCorner.getZ() + 1);
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d)",
   //          (int) cubeCorner.getX(),
   //          (int) cubeCorner.getY(),
@@ -187,7 +196,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //          cubeCorner.getY() + 1,
   //          cubeCorner.getZ() + 1);
   //
-  //  getCommandHandler().handleLine(
+  //  getApiInvocationHandler().handleLine(
   //      String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d,%d)",
   //          (int) cubeCorner.getX(),
   //          (int) cubeCorner.getY(),
@@ -217,7 +226,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //        .map(String::valueOf)
   //        .collect(Collectors.joining("|"));
   //
-  //    getCommandHandler().handleLine("world.getPlayerEntityIds()");
+  //    getApiInvocationHandler().handleLine("world.getPlayerEntityIds()");
   //
   //    assertEquals(
   //        Lists.newArrayList(expectedPlayerIdsStr),
@@ -248,7 +257,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //        getServerWrapper().getWorld().getHighestBlockAt(p.getBlockX() + 3, p.getBlockZ() + 7));
   //
   //    // x and z are relative to the origin
-  //    getCommandHandler().handleLine("world.getHeight(3,7)");
+  //    getApiInvocationHandler().handleLine("world.getHeight(3,7)");
   //
   //    // the first block before there's just air, at this x,z location,
   //    // relative to the player's origin
@@ -269,7 +278,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    Position p = nextTestPosition("block hit event");
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
   //            (int) p.getX(),
   //            (int) p.getY(),
@@ -283,7 +292,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
   //
-  //    getCommandHandler().handleLine("events.block.hits()");
+  //    getApiInvocationHandler().handleLine("events.block.hits()");
   //
   //    int expectedFace = 7;
   //
@@ -309,7 +318,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    Position p = nextTestPosition("block hit event");
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
   //            (int) p.getX(),
   //            (int) p.getY(),
@@ -321,12 +330,12 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
   //
-  //    getCommandHandler().handleLine("events.clear()");
+  //    getApiInvocationHandler().handleLine("events.clear()");
   //
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
   //
-  //    getCommandHandler().handleLine("events.block.hits()");
+  //    getApiInvocationHandler().handleLine("events.block.hits()");
   //
   //    int expectedFace = 7;
   //
@@ -353,8 +362,8 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.getTile()");
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine("player.getTile()");
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.getTile(%s)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    String expected = String.format("%d,%d,%d",
@@ -368,7 +377,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    setUpAtPlayerOrigin(new Position(3, 3, 3));
   //
-  //    getCommandHandler().handleLine("player.getTile()");
+  //    getApiInvocationHandler().handleLine("player.getTile()");
   //
   //    expected = String.format("%d,%d,%d",
   //        (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
@@ -403,7 +412,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // move the player diagonally
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.setTile(%s,5,5,5)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(
@@ -420,7 +429,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.setTile(7,7,7)");
+  //    getApiInvocationHandler().handleLine("player.setTile(7,7,7)");
   //
   //    assertEquals(
   //        new Position(
@@ -445,7 +454,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // player.getPos position result is relative to the origin (spawn location)
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.getPos(%s)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -458,7 +467,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.getPos()");
+  //    getApiInvocationHandler().handleLine("player.getPos()");
   //
   //    assertEquals(2, getTestOut().sends.size());
   //    assertEquals(
@@ -496,7 +505,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // move the player diagonally
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.setPos(%s,5.2,5.2,5.2)",
   //            getServerWrapper().getFirstPlayer().getName()));
   //
@@ -514,7 +523,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.setPos(7.2,7.2,7.2)");
+  //    getApiInvocationHandler().handleLine("player.setPos(7.2,7.2,7.2)");
   //
   //    assertEquals(
   //        new Position(
@@ -532,7 +541,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getServerWrapper().getFirstPlayer().setPitch(47f);
   //    getServerWrapper().getFirstPlayer().setRotation(97f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.getDirection(%s)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -548,7 +557,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.getDirection()");
+  //    getApiInvocationHandler().handleLine("player.getDirection()");
   //
   //    assertEquals(2, getTestOut().sends.size());
   //
@@ -568,7 +577,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  if (getServerWrapper().hasPlayers()) {
   //    getServerWrapper().getFirstPlayer().setPitch(49f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.getPitch(%s)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -576,7 +585,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.getPitch()");
+  //    getApiInvocationHandler().handleLine("player.getPitch()");
   //
   //    assertEquals(2, getTestOut().sends.size());
   //    assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(1)));
@@ -588,7 +597,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  if (getServerWrapper().hasPlayers()) {
   //    getServerWrapper().getFirstPlayer().setRotation(93f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("player.getRotation(%s)", getServerWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -596,7 +605,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // when player name is blank, default to first player
   //
-  //    getCommandHandler().handleLine("player.getRotation()");
+  //    getApiInvocationHandler().handleLine("player.getRotation()");
   //
   //    assertEquals(2, getTestOut().sends.size());
   //    assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(1)));
@@ -609,7 +618,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    Position p = nextTestPosition("entity.getTile");
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.getTile(%d)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    String expected = String.format("%d,%d,%d",
@@ -645,7 +654,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // move the entity diagonally
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.setTile(%d,5,5,5)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(
@@ -674,7 +683,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // entity.getPos position result is relative to the origin (spawn location)
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.getPos(%d)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -713,7 +722,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    // move the entity diagonally
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.setPos(%d,5.2,5.2,5.2)",
   //            getServerWrapper().getFirstPlayer().getID()));
   //
@@ -738,7 +747,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getServerWrapper().getFirstPlayer().setPitch(47f);
   //    getServerWrapper().getFirstPlayer().setRotation(97f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.getDirection(%d)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -759,7 +768,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  if (getServerWrapper().hasPlayers()) {
   //    getServerWrapper().getFirstPlayer().setPitch(49f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.getPitch(%d)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
@@ -772,7 +781,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //  if (getServerWrapper().hasPlayers()) {
   //    getServerWrapper().getFirstPlayer().setRotation(93f);
   //
-  //    getCommandHandler().handleLine(
+  //    getApiInvocationHandler().handleLine(
   //        String.format("entity.getRotation(%d)", getServerWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
