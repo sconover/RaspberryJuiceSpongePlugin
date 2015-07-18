@@ -1,4 +1,4 @@
-package com.giantpurplekitty.raspberrysponge.apis;
+package com.giantpurplekitty.raspberrysponge.api;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
