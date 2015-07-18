@@ -11,14 +11,15 @@ package com.giantpurplekitty.raspberrysponge;
 //import net.canarymod.hook.player.BlockRightClickHook;
 
 import org.junit.Test;
+import org.spongepowered.api.Game;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Tests all api methods expected to be available on the Minecraft Pi edition.
  */
-public class OriginalApiTest {
-    // extends InWorldTestSupport {
+public class OriginalApiTest extends InWorldTestSupport {
 
   /**
    * TODO:
@@ -41,20 +42,20 @@ public class OriginalApiTest {
     assertEquals(2, 1);
   }
 
-  //@Test
-  //public void test_chat_post() throws Exception {
-  //  String chatMessage = String.format("this-is-the-chat-message-%d", System.currentTimeMillis());
-  //
-  //  getCommandHandler().handleLine(String.format("chat.post(%s)", chatMessage));
-  //
-  //  String last20LinesOfLogFile = FileHelper.readEndOfLogfile();
-  //
-  //  assertTrue(
-  //      String.format("expected '%s' to be present, but was not. full text:\n\n%s",
-  //          chatMessage,
-  //          last20LinesOfLogFile),
-  //      last20LinesOfLogFile.contains(chatMessage));
-  //}
+  @Test
+  public void test_chat_post() throws Exception {
+    String chatMessage = String.format("this-is-the-chat-message-%d", System.currentTimeMillis());
+
+    getCommandHandler().handleLine(String.format("chat.post(%s)", chatMessage));
+
+    String last20LinesOfLogFile = FileHelper.readEndOfLogfile();
+
+    assertTrue(
+        String.format("expected '%s' to be present, but was not. full text:\n\n%s",
+            chatMessage,
+            last20LinesOfLogFile),
+        last20LinesOfLogFile.contains(chatMessage));
+  }
   //
   //@Test
   //public void test_world_getBlock() throws Exception {

@@ -1,8 +1,8 @@
 package com.giantpurplekitty.raspberrysponge;
 
-import org.spongepowered.api.Game;
+import org.spongepowered.api.Server;
 
 public class ServerWrapper {
-  public ServerWrapper(Game game) {
+  public ServerWrapper(Server server) {
   }
 }
