@@ -1,7 +1,7 @@
 package com.giantpurplekitty.raspberrysponge.raspberryserver;
 
 import com.giantpurplekitty.raspberrysponge.dispatch.ApiInvocationHandler;
-import com.giantpurplekitty.raspberrysponge.game.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import com.google.common.base.Throwables;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,7 +42,7 @@ public class RemoteSession {
     RemoteSession remoteSession = new RemoteSession(
         logger,
         toOutQueue,
-        new ApiInvocationHandler(new ServerWrapper(game.getServer()), logger, toOutQueue),
+        new ApiInvocationHandler(new GameWrapper(game), logger, toOutQueue),
         socket);
     remoteSession.init();
     return remoteSession;

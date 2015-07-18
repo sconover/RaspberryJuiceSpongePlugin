@@ -4,7 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.ApiInvocationHandler;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.LocationHelper;
-import com.giantpurplekitty.raspberrysponge.game.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import java.util.ArrayDeque;
 import org.junit.Before;
@@ -29,13 +29,13 @@ public abstract class InWorldTestSupport {
   public static final int PLAYER_PLACEMENT_Y_OFFSET = 10;
   public static final int PLAYER_PLACEMENT_Z_OFFSET = -30;
 
-  private ServerWrapper serverWrapper;
+  private GameWrapper gameWrapper;
   private static int xOffset = 2;
   private TestOut testOut;
   private ApiInvocationHandler apiInvocationHandler;
 
-  public ServerWrapper getServerWrapper() {
-    return serverWrapper;
+  public GameWrapper getGameWrapper() {
+    return gameWrapper;
   }
 
   public TestOut getTestOut() {
@@ -56,17 +56,17 @@ public abstract class InWorldTestSupport {
   }
 
   public void setUpAtPlayerOrigin(Vector3i position) {
-    serverWrapper = new ServerWrapper(game.getServer());
+    gameWrapper = new GameWrapper(game);
 
     //TODO
     //makeSureChunksHaveBeenGenerated(serverWrapper.getWorld(), position);
 
-    serverWrapper.setSpawnPosition(position);
+    gameWrapper.setSpawnPosition(position);
 
     testOut = new TestOut();
 
     apiInvocationHandler = new ApiInvocationHandler(
-        serverWrapper,
+        gameWrapper,
         logger,
         testOut);
 
@@ -96,9 +96,9 @@ public abstract class InWorldTestSupport {
     Vector3i testPosition = new Vector3i(xOffset, 100, 2);
     Vector3i justBeforeTestPosition = new Vector3i(xOffset-1, 99, 1);
     CuboidReference ref = new CuboidReference(justBeforeTestPosition, 31, 51, 31);
-    ref.fetchBlocks(serverWrapper.getWorld()).makeEmpty();
+    ref.fetchBlocks(gameWrapper).makeEmpty();
   
-    Location block = serverWrapper.getWorld().getLocation(justBeforeTestPosition);
+    Location block = gameWrapper.getLocation(justBeforeTestPosition);
     block.setBlockType(BlockTypes.SEA_LANTERN);
 
     Location blockAbove = block.add(0, 1, 0);
@@ -114,14 +114,14 @@ public abstract class InWorldTestSupport {
     //sign.setTextOnLine("zzz", 2);
     //sign.setTextOnLine("yyy", 3);
   
-    if (serverWrapper.hasPlayers()) {
+    if (gameWrapper.hasPlayers()) {
       LocationHelper.PositionAndRotation positionAndRotation =
           LocationHelper.getLocationFacingPosition(testPosition,
               PLAYER_PLACEMENT_X_OFFSET, PLAYER_PLACEMENT_Y_OFFSET, PLAYER_PLACEMENT_Z_OFFSET);
 
-      serverWrapper.getFirstPlayer()
+      gameWrapper.getFirstPlayer()
           .setLocationAndRotation(
-              new Location(serverWrapper.getWorld(), positionAndRotation.position),
+              gameWrapper.getLocation(positionAndRotation.position),
               positionAndRotation.rotation);
     }
     xOffset += 30;

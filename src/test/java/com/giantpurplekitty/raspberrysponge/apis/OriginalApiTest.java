@@ -50,17 +50,15 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_world_getBlock() throws Exception {
     //Position p = nextTestPosition("world.getBlock");
 
-    Vector3i p = getServerWrapper().getSpawnPosition();
+    Vector3i p = getGameWrapper().getSpawnPosition();
 
-    Location block = new Location(getServerWrapper().getWorld(),
-        p.getX()+3, p.getY()+3, p.getZ()+3);
+    Location block = getGameWrapper().getLocation(p.getX()+3, p.getY()+3, p.getZ()+3);
     block.setBlockType(BlockTypes.REDSTONE_BLOCK);
 
     // sanity check
     assertEquals(
         BlockTypes.REDSTONE_BLOCK,
-        new Location(getServerWrapper().getWorld(),
-            p.getX()+3, p.getY()+3, p.getZ()+3).getBlockType());
+        getGameWrapper().getLocation(p.getX()+3, p.getY()+3, p.getZ()+3).getBlockType());
 
     getApiInvocationHandler().handleLine(
         String.format("world.getBlock(%d,%d,%d)", 3, 3, 3));

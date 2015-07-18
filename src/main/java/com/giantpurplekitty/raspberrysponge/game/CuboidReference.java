@@ -3,7 +3,6 @@ package com.giantpurplekitty.raspberrysponge.game;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
 import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 /**
  * A "potential" cuboid (collection of blocks) in a minecraft world.
@@ -56,7 +55,7 @@ public class CuboidReference {
     this.zSize = zSize;
   }
 
-  public Cuboid fetchBlocks(World world) {
+  public Cuboid fetchBlocks(GameWrapper game) {
     //TODO real-world bounds checking
 
     //TODO: consider wrapping world, with something that only exposes a minimal set of
@@ -66,7 +65,7 @@ public class CuboidReference {
     //TODO
     //makeSureChunksHaveBeenGenerated(world, start, xSize, zSize);
 
-    Location corner = world.getLocation(start);
+    Location corner = game.getLocation(start);
 
     Location[][][] result = new Location[xSize][ySize][zSize];
     for (int x = 0; x < xSize; x++) {

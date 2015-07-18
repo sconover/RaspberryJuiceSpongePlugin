@@ -2,7 +2,7 @@ package com.giantpurplekitty.raspberrysponge.dispatch;
 
 import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import com.giantpurplekitty.raspberrysponge.apis.OriginalApi;
-import com.giantpurplekitty.raspberrysponge.game.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 public class ApiInvocationHandler {
-  private final ServerWrapper serverWrapper;
+  private final GameWrapper gameWrapper;
   private final Logger logger;
   private final RemoteSession.Out out;
 
@@ -27,15 +27,15 @@ public class ApiInvocationHandler {
       new LinkedHashMap<String, Pair<Object, Method>>();
 
   public ApiInvocationHandler(
-      ServerWrapper serverWrapper,
+      GameWrapper gameWrapper,
       Logger logger,
       RemoteSession.Out out) { // TODO: move ToOutQueue to top level
 
-    this.serverWrapper = serverWrapper;
+    this.gameWrapper = gameWrapper;
     this.logger = logger;
     this.out = out;
 
-    registerApiMethods(new OriginalApi(serverWrapper, logger));
+    registerApiMethods(new OriginalApi(gameWrapper, logger));
     //registerApiMethods(new ExtendedApi(serverWrapper, logman));
   }
 

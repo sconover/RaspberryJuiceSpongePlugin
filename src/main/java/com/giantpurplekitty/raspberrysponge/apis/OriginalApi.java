@@ -4,20 +4,20 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
-import com.giantpurplekitty.raspberrysponge.game.ServerWrapper;
+import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockType;
 
 public class OriginalApi {
-  private final ServerWrapper serverWrapper;
+  private final GameWrapper gameWrapper;
   //private final ArrayDeque<BlockRightClickHook> blockHitQueue;
   private final Logger logger;
 
   public OriginalApi(
-      ServerWrapper serverWrapper,
+      GameWrapper gameWrapper,
       //ArrayDeque<BlockRightClickHook> blockHitQueue,
       Logger logger) {
-    this.serverWrapper = serverWrapper;
+    this.gameWrapper = gameWrapper;
     //this.blockHitQueue = blockHitQueue;
     this.logger = logger;
   }
@@ -25,7 +25,7 @@ public class OriginalApi {
   @RPC("world.getBlock")
   public BlockType world_getBlock(int x, int y, int z) {
     return CuboidReference.relativeTo(getOrigin(), new Vector3i(x, y, z))
-        .fetchBlocks(serverWrapper.getWorld())
+        .fetchBlocks(gameWrapper)
         .firstBlock()
         .getBlockType();
   }
@@ -88,7 +88,7 @@ public class OriginalApi {
 
   @RPC("chat.post")
   public void chat_post(@RawArgString String chatStr) {
-    serverWrapper.broadcastMessage(chatStr);
+    gameWrapper.broadcastMessage(chatStr);
   }
 
   //@RPC("events.clear")
@@ -228,7 +228,7 @@ public class OriginalApi {
   //}
   //
   private Vector3i getOrigin() {
-    return serverWrapper.getSpawnPosition();
+    return gameWrapper.getSpawnPosition();
   }
   //
   //private Vector3D getEntityDirection(Entity entity) {
