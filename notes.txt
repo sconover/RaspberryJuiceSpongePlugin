@@ -32,6 +32,9 @@ because we want Sponge to pick up the RaspberryJuiceTestRunnerPlugin as a plugin
 for when we run the server within the IDE (and are doing development),
 but still want directory separation for gradle build purposes.
 
+Also need to switch junit to be a Compile dependency, (not just a Test dependency) in the
+raspberry juice module settings in Intellij.
+
 gpk site
   devs/admins
     code / contribution focused
