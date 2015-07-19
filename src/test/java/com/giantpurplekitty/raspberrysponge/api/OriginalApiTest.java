@@ -4,13 +4,14 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.google.common.collect.Lists;
-import java.awt.Color;
 import org.junit.Test;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.ColoredData;
+import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.world.Location;
 
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForBlockType;
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -65,7 +66,8 @@ public class OriginalApiTest extends InWorldTestSupport {
         String.format("world.getBlock(%d,%d,%d)", 3, 3, 3));
 
     assertEquals(
-        Lists.newArrayList(String.valueOf(BlockTypes.REDSTONE_BLOCK.getId())),
+        Lists.newArrayList(
+            String.valueOf(getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK))),
         getTestOut().sends);
   }
 
@@ -274,42 +276,42 @@ public class OriginalApiTest extends InWorldTestSupport {
    2: Stopped / used up
    */
 
-  //TODO - disabled.
+  // TODO - test returning other types of data
+  // TODO - future api where we return string id values (maybe sooner rather than later...this can be here for backward compat)
+
   // turn the api notes above into enums
   // then iterate through and make sure various types of things match up
   // will probably need to establish a static mapping of internal -> external types
+  @Test
   public void test_world_getBlockWithData() throws Exception {
     Vector3i p = nextTestPosition("world.getBlockWithData");
-  
+
     Location block = getGameWrapper().getLocation(p);
-    block.setBlockType(BlockTypes.GLOWSTONE);
+    block.setBlockType(BlockTypes.REDSTONE_BLOCK);
 
     Location block2 = block.add(1, 0, 0);
-    BlockState woolBlock = BlockTypes.WOOL.getDefaultState();
-    ColoredData coloredData =
-        woolBlock.getManipulator(ColoredData.class).get().setColor(Color.GREEN);
-    block2.setBlock(woolBlock);
+    BlockState limeWoolBlock =
+        getGameWrapper().setDyeColor(BlockTypes.WOOL.getDefaultState(), DyeColors.LIME.getColor());
+    block2.setBlock(limeWoolBlock);
 
     getApiInvocationHandler().handleLine(
         String.format("world.getBlockWithData(%d,%d,%d)", p.getX(), p.getY(), p.getZ()));
 
-    int glowstoneRaspberryApiBlockId = 89;
     assertEquals(
-        String.format("%d,%d", glowstoneRaspberryApiBlockId, 0),
+        String.format("%d,%d", getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK), 0),
         getTestOut().sends.get(0));
   
     getApiInvocationHandler().handleLine(
         String.format("world.getBlockWithData(%d,%d,%d)", p.getX() + 1, p.getY(), p.getZ()));
 
-    int woolRaspberryApiBlockId = 35;
     assertEquals(
         String.format("%d,%d",
-            BlockTypes.WOOL.getId(),
-            woolBlock.getManipulator(ColoredData.class).get().getColor()),
+            getIntegerIdForBlockType(BlockTypes.WOOL),
+            getIntegerIdForColor(DyeColors.LIME.getColor())),
         getTestOut().sends.get(1));
   }
   
-  //TODO as above, use external types. This test might be wrong, re: id's
+  @Test
   public void test_world_setBlock() throws Exception {
     Vector3i p = nextTestPosition("world.setBlock");
   

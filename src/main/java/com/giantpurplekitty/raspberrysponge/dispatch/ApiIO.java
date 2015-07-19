@@ -1,6 +1,9 @@
 package com.giantpurplekitty.raspberrysponge.dispatch;
 
+import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
+import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
+import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockType;
 
 public class ApiIO {
@@ -34,7 +37,7 @@ public class ApiIO {
 
   public static String serializeResult(Object objectResult) {
     if (objectResult instanceof BlockType) {
-      return String.valueOf(((BlockType) objectResult).getId());
+      return String.valueOf(TypeMappings.getIntegerIdForBlockType(((BlockType) objectResult)));
     }
     //} else if (objectResult instanceof BlockType[]) {
     //  BlockType[] blockTypes = (BlockType[]) objectResult;
@@ -45,11 +48,12 @@ public class ApiIO {
     //  return serializeResult(strings);
     //} else if (objectResult instanceof String[]) {
     //  return Joiner.on(",").join((String[]) objectResult);
-    //} else if (objectResult instanceof Pair) {
-    //  Pair pair = (Pair) objectResult;
-    //  return Joiner.on(",").join(
-    //      serializeResult(pair.getLeft()),
-    //      serializeResult(pair.getRight()));
+    else if (objectResult instanceof Pair) {
+      Pair pair = (Pair) objectResult;
+      return Joiner.on(",").join(
+          serializeResult(pair.getLeft()),
+          serializeResult(pair.getRight()));
+    }
     //} else if (objectResult instanceof Short) {
     //  return String.valueOf(objectResult);
     //} else if (objectResult instanceof String) {
@@ -80,9 +84,9 @@ public class ApiIO {
     //  return positionToApiString((Position) objectResult);
     //} else if (objectResult instanceof Float) {
     //  return String.format("%f", (Float) objectResult);
-    //} else if (objectResult instanceof Integer) {
-    //  return String.format("%d", (Integer) objectResult);
-    //}
+     else if (objectResult instanceof Integer) {
+      return String.valueOf((Integer)objectResult);
+    }
     throw new RuntimeException(String.format(
         "not sure how to serialize %s %s",
         objectResult.getClass().getName(),

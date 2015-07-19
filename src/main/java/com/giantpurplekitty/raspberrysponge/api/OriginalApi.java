@@ -5,8 +5,14 @@ import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 
 public class OriginalApi {
   private final GameWrapper gameWrapper;
@@ -29,20 +35,27 @@ public class OriginalApi {
         .firstBlock()
         .getBlockType();
   }
-  //
-  //@RPC("world.getBlockWithData")
-  //public Pair<BlockType, Short> world_setBlockWithData(int x, int y, int z) {
-  //  BlockType blockType = world_getBlock(x, y, z);
-  //  return ImmutablePair.of(blockType, blockType.getData());
-  //}
-  //
+
+  @RPC("world.getBlockWithData")
+  public Pair<BlockType, Integer> world_setBlockWithData(int x, int y, int z) {
+    BlockState blockState = gameWrapper.getBlock(x, y, z);
+    int data = 0;
+
+    //TODO: hard-coded to only work with color right now. Make this work for other kinds of "data"
+    if (gameWrapper.hasColor(blockState)) {
+      data = getIntegerIdForColor(gameWrapper.getDyeColor(blockState));
+    }
+
+    return ImmutablePair.of(blockState.getType(), data);
+  }
+
   @RPC("world.setBlock")
   public void world_setBlock(int x, int y, int z, short blockTypeId) {
     CuboidReference.relativeTo(getOrigin(),
         new Vector3i(x, y, z),
         new Vector3i(x, y, z))
         .fetchBlocks(gameWrapper)
-        .changeBlocksToType(gameWrapper.getTypeById(BlockType.class, blockTypeId));
+        .changeBlocksToType(getBlockTypeForIntegerId(blockTypeId));
   }
 
   //@RPC("world.setBlock")

@@ -27,15 +27,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/unresolved dependency - org.spongepowered spongeapi 1.0" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.8.1/f2975548f836416306ef1dee748d956f04733915/junit-4.8.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -44,6 +35,7 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Gradle: :minecraft_merged_src_SpongeCommon:1.8" level="project" />
     <orderEntry type="module" module-name="SpongeAPI" />
   </component>
 </module>
