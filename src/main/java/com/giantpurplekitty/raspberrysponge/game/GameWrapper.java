@@ -8,6 +8,7 @@ import java.util.List;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
@@ -75,5 +76,14 @@ public class GameWrapper {
       }
     });
     return playerList;
+  }
+
+  public int getHighestBlockAt(int x, int z) {
+    for (int y=world.getBlockMax().getY(); y>=0; y--) {
+      if (!world.getBlock(x, y, z).getType().equals(BlockTypes.AIR)) {
+        return y;
+      }
+    }
+    return 0;
   }
 }

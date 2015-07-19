@@ -86,13 +86,13 @@ public class OriginalApi {
     return allPlayers.toArray(new Player[allPlayers.size()]);
   }
 
-  //@RPC("world.getHeight")
-  //public int world_getHeight(int x, int z) {
-  //  int relativeX = getOrigin().getBlockX() + x;
-  //  int relativeZ = getOrigin().getBlockZ() + z;
-  //  int absoluteHeight = serverWrapper.getWorld().getHighestBlockAt(relativeX, relativeZ);
-  //  return absoluteHeight - getOrigin().getBlockY();
-  //}
+  @RPC("world.getHeight")
+  public int world_getHeight(int x, int z) {
+    int relativeX = getOrigin().getX() + x;
+    int relativeZ = getOrigin().getZ() + z;
+    int absoluteHeight = gameWrapper.getHighestBlockAt(relativeX, relativeZ);
+    return absoluteHeight - getOrigin().getY();
+  }
 
   @RPC("chat.post")
   public void chat_post(@RawArgString String chatStr) {

@@ -332,41 +332,40 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
   }
 
-  //@Test
-  //public void test_world_getHeight() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //    Vector3i p = nextTestPosition("world.getHeight");
-  //
-  //    // make the origin == p
-  //
-  //    setUpAtPlayerOrigin(p);
-  //
-  //    Location block =
-  //        getGameWrapper().getLocation(
-  //            p.getBlockX() + 3,
-  //            p.getBlockY() + 5,
-  //            p.getBlockZ() + 7);
-  //    block.setBlockType(BlockTypes.REDSTONE_BLOCK);
-  //    block.update();
-  //
-  //    // sanity check of height
-  //    assertEquals(
-  //        p.getBlockY() + 6, // height of block y, + 1
-  //        getGameWrapper().getWorld().getHighestBlockAt(p.getBlockX() + 3, p.getBlockZ() + 7));
-  //
-  //    // x and z are relative to the origin
-  //    getApiInvocationHandler().handleLine("world.getHeight(3,7)");
-  //
-  //    // the first block before there's just air, at this x,z location,
-  //    // relative to the player's origin
-  //    int expectedWorldHeight = 6;
-  //
-  //    assertEquals(
-  //        Lists.newArrayList(String.valueOf(expectedWorldHeight)),
-  //        getTestOut().sends);
-  //  }
-  //}
-  //
+  @Test
+  public void test_world_getHeight() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+      Vector3i p = nextTestPosition("world.getHeight");
+  
+      // make the origin == p
+  
+      setUpAtPlayerOrigin(p);
+  
+      Location block =
+          getGameWrapper().getLocation(
+              p.getX() + 3,
+              p.getY() + 5,
+              p.getZ() + 7);
+      block.setBlockType(BlockTypes.REDSTONE_BLOCK);
+  
+      // sanity check of height
+      assertEquals(
+          p.getY() + 6, // height of block y, + 1
+          getGameWrapper().getHighestBlockAt(p.getX() + 3, p.getZ() + 7));
+  
+      // x and z are relative to the origin
+      getApiInvocationHandler().handleLine("world.getHeight(3,7)");
+  
+      // the first block before there's just air, at this x,z location,
+      // relative to the player's origin
+      int expectedWorldHeight = 6;
+  
+      assertEquals(
+          Lists.newArrayList(String.valueOf(expectedWorldHeight)),
+          getTestOut().sends);
+    }
+  }
+  
   //@Test
   //public void test_events_block_hits() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {
