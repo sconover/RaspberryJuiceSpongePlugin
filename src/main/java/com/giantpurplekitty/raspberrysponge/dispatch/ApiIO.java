@@ -3,6 +3,7 @@ package com.giantpurplekitty.raspberrysponge.dispatch;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.api.OriginalApi;
+import com.giantpurplekitty.raspberrysponge.game.EntityHelper;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
@@ -65,7 +66,7 @@ public class ApiIO {
     //} else if (objectResult instanceof String) {
     //  return (String) objectResult;
     else if (objectResult instanceof Player) {
-      return String.valueOf(((Player) objectResult).getIdentifier());
+      return String.valueOf(EntityHelper.getEntityId((Player) objectResult));
     } else if (objectResult instanceof Player[]) {
       Player[] players = (Player[]) objectResult;
       List<String> strings = new ArrayList<String>();

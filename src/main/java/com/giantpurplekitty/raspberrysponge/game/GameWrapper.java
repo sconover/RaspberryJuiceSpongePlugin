@@ -80,7 +80,7 @@ public class GameWrapper {
     List<Player> playerList = new ArrayList<Player>(game.getServer().getOnlinePlayers());
     Collections.sort(playerList, new Comparator<Player>() {
       @Override public int compare(Player p1, Player p2) {
-        return p1.getIdentifier().compareTo(p2.getIdentifier());
+        return EntityHelper.getEntityId(p1) - EntityHelper.getEntityId(p2);
       }
     });
     return playerList;

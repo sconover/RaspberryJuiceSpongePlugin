@@ -6,6 +6,7 @@ import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
+import com.giantpurplekitty.raspberrysponge.game.EntityHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -317,9 +318,9 @@ public class OriginalApiTest extends InWorldTestSupport {
   @Test
   public void test_world_getPlayerEntityIds() throws Exception {
     if (shouldRunBecausePlayerIsLoggedIntoGame()) {
-      List<String> playerIds = new ArrayList<String>();
+      List<Integer> playerIds = new ArrayList<Integer>();
       for(Player p: getGameWrapper().getPlayers()) {
-        playerIds.add(p.getIdentifier());
+        playerIds.add(EntityHelper.getEntityId(p));
       }
       Collections.sort(playerIds);
       String expectedPlayerIdsStr =

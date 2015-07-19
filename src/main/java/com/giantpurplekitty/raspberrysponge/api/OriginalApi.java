@@ -201,6 +201,8 @@ public class OriginalApi {
     return (float) gameWrapper.getPlayerByName(playerName).getRotation().getX();
   }
 
+  // ((net.minecraft.entity.player.EntityPlayerMP)gameWrapper.getFirstPlayer()).getEntityId()
+
   //@RPC("entity.getTile")
   //public BlockPosition entity_getTile(int entityId) {
   //  return getEntityBlockPositionRelativeToOrigin(gameWrapper.getEntityById(entityId));
