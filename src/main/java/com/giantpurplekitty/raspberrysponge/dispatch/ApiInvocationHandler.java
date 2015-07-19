@@ -42,7 +42,7 @@ public class ApiInvocationHandler {
   private void registerApiMethods(Object api) {
     for (Method m : api.getClass().getMethods()) {
       if (m.isAnnotationPresent(RPC.class)) {
-        String apiMethodName = m.getDeclaredAnnotation(RPC.class).value();
+        String apiMethodName = m.getAnnotation(RPC.class).value();
 
         if (m.getParameterAnnotations().length == 1 &&
             m.getParameterAnnotations()[0].getClass().equals(RawArgString.class)) {
@@ -51,7 +51,7 @@ public class ApiInvocationHandler {
               ImmutablePair.of(api, m));
         } else {
           apiMethodNameAndParameterCountToApiObjectAndMethod.put(
-              ImmutablePair.of(apiMethodName, m.getParameterCount()),
+              ImmutablePair.of(apiMethodName, m.getParameterTypes().length),
               ImmutablePair.of(api, m));
         }
       }

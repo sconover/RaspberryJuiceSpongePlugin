@@ -127,14 +127,18 @@ public class Cuboid implements Iterable<Relative<Location>> {
       this.next = new Relative<Location>(blocks[0][0][0], 0, 0, 0);
     }
 
-    @Override public boolean hasNext() {
+    public boolean hasNext() {
       return next != null;
     }
 
-    @Override public Relative<Location> next() {
+    public Relative<Location> next() {
       Relative<Location> result = next;
       advance();
       return result;
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
     }
 
     private void advance() {
