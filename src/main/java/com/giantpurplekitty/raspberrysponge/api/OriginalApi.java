@@ -16,6 +16,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 
+import static com.giantpurplekitty.raspberrysponge.game.EntityHelper.getEntityById;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
 import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
@@ -201,45 +202,43 @@ public class OriginalApi {
     return (float) gameWrapper.getPlayerByName(playerName).getRotation().getX();
   }
 
-  // ((net.minecraft.entity.player.EntityPlayerMP)gameWrapper.getFirstPlayer()).getEntityId()
+  @RPC("entity.getTile")
+  public Vector3i entity_getTile(int entityId) {
+    return getEntityBlockPositionRelativeToOrigin(getEntityById(gameWrapper, entityId));
+  }
 
-  //@RPC("entity.getTile")
-  //public BlockPosition entity_getTile(int entityId) {
-  //  return getEntityBlockPositionRelativeToOrigin(gameWrapper.getEntityById(entityId));
-  //}
-  //
-  //@RPC("entity.setTile")
-  //public void entity_setTile(int entityId, int relativeX, int relativeY, int relativeZ) {
-  //  teleportEntityRelativeToOriginTo(gameWrapper.getEntityById(entityId), relativeX, relativeY,
-  //      relativeZ);
-  //}
-  //
-  //@RPC("entity.getPos")
-  //public Vector3i entity_getPos(int entityId) {
-  //  return getEntityPositionRelativeToOrigin(gameWrapper.getEntityById(entityId));
-  //}
-  //
-  //@RPC("entity.setPos")
-  //public void entity_setPos(int entityId, float relativeX, float relativeY, float relativeZ) {
-  //  teleportEntityRelativeToOriginTo(gameWrapper.getEntityById(entityId), relativeX, relativeY,
-  //      relativeZ);
-  //}
-  //
-  //@RPC("entity.getDirection")
-  //public Vector3D entity_getDirection(int entityId) {
-  //  return getEntityDirection(gameWrapper.getEntityById(entityId));
-  //}
-  //
-  //@RPC("entity.getPitch")
-  //public float entity_getPitch(int entityId) {
-  //  return gameWrapper.getEntityById(entityId).getPitch();
-  //}
-  //
-  //@RPC("entity.getRotation")
-  //public float entity_getRotation(int entityId) {
-  //  return gameWrapper.getEntityById(entityId).getRotation();
-  //}
-  //
+  @RPC("entity.setTile")
+  public void entity_setTile(int entityId, int relativeX, int relativeY, int relativeZ) {
+    teleportEntityRelativeToOriginTo(getEntityById(gameWrapper, entityId), relativeX, relativeY,
+        relativeZ);
+  }
+
+  @RPC("entity.getPos")
+  public Vector3d entity_getPos(int entityId) {
+    return getEntityBlockPositionRelativeToOrigin(getEntityById(gameWrapper, entityId)).toDouble();
+  }
+
+  @RPC("entity.setPos")
+  public void entity_setPos(int entityId, float relativeX, float relativeY, float relativeZ) {
+    teleportEntityRelativeToOriginTo(getEntityById(gameWrapper, entityId),
+        relativeX, relativeY, relativeZ);
+  }
+
+  @RPC("entity.getDirection")
+  public Direction entity_getDirection(int entityId) {
+    return getEntityDirection(getEntityById(gameWrapper, entityId));
+  }
+
+  @RPC("entity.getPitch")
+  public float entity_getPitch(int entityId) {
+    return (float) getEntityById(gameWrapper, entityId).getRotation().getY();
+  }
+
+  @RPC("entity.getRotation")
+  public float entity_getRotation(int entityId) {
+    return (float) getEntityById(gameWrapper, entityId).getRotation().getX();
+  }
+
   private Vector3i getOrigin() {
     return gameWrapper.getSpawnPosition();
   }

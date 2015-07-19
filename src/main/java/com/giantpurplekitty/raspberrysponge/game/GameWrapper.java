@@ -3,6 +3,7 @@ package com.giantpurplekitty.raspberrysponge.game;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
@@ -21,6 +23,7 @@ public class GameWrapper {
   private final Game game;
   private final World world;
   private final Server server;
+  private Entity entities;
 
   public GameWrapper(Game game) {
     this.game = game;
@@ -93,5 +96,9 @@ public class GameWrapper {
       }
     }
     return 0;
+  }
+
+  public Collection<Entity> getEntities() {
+    return world.getEntities();
   }
 }
