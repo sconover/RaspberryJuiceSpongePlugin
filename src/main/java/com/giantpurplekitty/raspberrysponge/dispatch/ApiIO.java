@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge.dispatch;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
@@ -87,8 +88,10 @@ public class ApiIO {
     }
     //} else if (objectResult instanceof Vector3D) {
     //  return vectorToApiString((Vector3D) objectResult);
-    //} else if (objectResult instanceof Position) {
-    //  return positionToApiString((Position) objectResult);
+    else if (objectResult instanceof Vector3d) {
+      Vector3d v = ((Vector3d) objectResult);
+      return String.format("%.1f,%.1f,%.1f", v.getX(), v.getY(), v.getZ());
+    }
     //} else if (objectResult instanceof Float) {
     //  return String.format("%f", (Float) objectResult);
     else if (objectResult instanceof Integer) {

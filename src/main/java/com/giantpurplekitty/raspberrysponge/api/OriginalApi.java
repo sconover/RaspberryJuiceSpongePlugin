@@ -142,28 +142,28 @@ public class OriginalApi {
         relativeX, relativeY, relativeZ);
   }
 
-  //@RPC("player.getPos")
-  //public Vector3i player_getPos() {
-  //  //TODO: what do we do here if there's no player logged in?
-  //  return player_getPos(serverWrapper.getFirstPlayer().getName());
-  //}
-  //
-  //@RPC("player.getPos")
-  //public Vector3i player_getPos(String playerName) {
-  //  return getEntityPositionRelativeToOrigin(serverWrapper.getPlayerByName(playerName));
-  //}
-  //
-  //@RPC("player.setPos")
-  //public void player_setPos(float relativeX, float relativeY, float relativeZ) {
-  //  player_setPos(serverWrapper.getFirstPlayer().getName(), relativeX, relativeY, relativeZ);
-  //}
-  //
-  //@RPC("player.setPos")
-  //public void player_setPos(String playerName, float relativeX, float relativeY, float relativeZ) {
-  //  teleportEntityRelativeToOriginTo(serverWrapper.getPlayerByName(playerName), relativeX,
-  //      relativeY, relativeZ);
-  //}
-  //
+  @RPC("player.getPos")
+  public Vector3d player_getPos() {
+    //TODO: what do we do here if there's no player logged in?
+    return player_getPos(gameWrapper.getFirstPlayer().getName());
+  }
+
+  @RPC("player.getPos")
+  public Vector3d player_getPos(String playerName) {
+    return getEntityBlockPositionRelativeToOrigin(gameWrapper.getPlayerByName(playerName)).toDouble();
+  }
+
+  @RPC("player.setPos")
+  public void player_setPos(float relativeX, float relativeY, float relativeZ) {
+    player_setPos(gameWrapper.getFirstPlayer().getName(), relativeX, relativeY, relativeZ);
+  }
+
+  @RPC("player.setPos")
+  public void player_setPos(String playerName, float relativeX, float relativeY, float relativeZ) {
+    teleportEntityRelativeToOriginTo(gameWrapper.getPlayerByName(playerName),
+        relativeX, relativeY, relativeZ);
+  }
+
   //// TODO: all of these need javadoc
   //
   //@RPC("player.getDirection")
@@ -240,10 +240,6 @@ public class OriginalApi {
     return gameWrapper.getSpawnPosition();
   }
 
-  private Vector3d getOriginAsDouble() {
-    Vector3i p = gameWrapper.getSpawnPosition();
-    return new Vector3d(p.getX(), p.getY(), p.getZ());
-  }
   //
   //private Vector3D getEntityDirection(Entity entity) {
   //  return calculateDirection(entity.getPitch(), entity.getRotation());
@@ -257,8 +253,8 @@ public class OriginalApi {
     return blockPositionRelativeTo(entity.getLocation().getBlockPosition(), getOrigin());
   }
 
-  private void teleportEntityRelativeToOriginTo(Entity entity, double x, double y, double z) {
-    entity.setLocation(entity.getLocation().setPosition(getOriginAsDouble().add(x, y, z)));
+  private void teleportEntityRelativeToOriginTo(Entity entity, float x, float y, float z) {
+    entity.setLocation(entity.getLocation().setPosition(getOrigin().toDouble().add(x, y, z)));
   }
 
   //

@@ -1,12 +1,14 @@
 package com.giantpurplekitty.raspberrysponge;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.ApiInvocationHandler;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
-import com.giantpurplekitty.raspberrysponge.game.LocationHelper;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import com.giantpurplekitty.raspberrysponge.game.LocationHelper;
 import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import java.util.ArrayDeque;
+import org.junit.Assert;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -140,6 +142,12 @@ public abstract class InWorldTestSupport {
       logger.warn("Skipping test because there's no player logged into the game!");
     }
     return result;
+  }
+
+  public void assertVector3dEquals(Vector3d expected, Vector3d actual) {
+    Assert.assertEquals(expected.getX(), actual.getX(), 0.1d);
+    Assert.assertEquals(expected.getY(), actual.getY(), 0.1d);
+    Assert.assertEquals(expected.getZ(), actual.getZ(), 0.1d);
   }
 
 }

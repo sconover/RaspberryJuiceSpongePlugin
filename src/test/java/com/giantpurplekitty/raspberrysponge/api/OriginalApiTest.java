@@ -536,100 +536,100 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
   }
 
-  //@Test
-  //public void test_player_getPos() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    Vector3i p = nextTestPosition("player.getPos");
-  //
-  //    // make the origin == p
-  //
-  //    setUpAtPlayerOrigin(p);
-  //
-  //    // TODO: provide comment guidance in the other tests along this lines of this one.
-  //
-  //    // player.getPos position result is relative to the origin (spawn location)
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getPos(%s)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(1, getTestOut().sends.size());
-  //    assertEquals(
-  //        String.format("%.1f,%.1f,%.1f",
-  //            (float) PLAYER_PLACEMENT_X_OFFSET,
-  //            (float) PLAYER_PLACEMENT_Y_OFFSET,
-  //            (float) PLAYER_PLACEMENT_Z_OFFSET),
-  //        getTestOut().sends.get(0));
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.getPos()");
-  //
-  //    assertEquals(2, getTestOut().sends.size());
-  //    assertEquals(
-  //        String.format("%.1f,%.1f,%.1f",
-  //            (float) PLAYER_PLACEMENT_X_OFFSET,
-  //            (float) PLAYER_PLACEMENT_Y_OFFSET,
-  //            (float) PLAYER_PLACEMENT_Z_OFFSET),
-  //        getTestOut().sends.get(1));
-  //  }
-  //}
-  //
-  //@Test
-  //public void test_player_setPos() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    Vector3i p = nextTestPosition("player.setPos");
-  //
-  //    Vector3i pMid = new Vector3i(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
-  //
-  //    // make the origin == p
-  //
-  //    setUpAtPlayerOrigin(pMid);
-  //
-  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
-  //    getGameWrapper().getFirstPlayer().setRotation(89f);
-  //
-  //    // initial position
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + (double) PLAYER_PLACEMENT_X_OFFSET,
-  //            p.getY() + (double) PLAYER_PLACEMENT_Y_OFFSET,
-  //            p.getZ() + (double) PLAYER_PLACEMENT_Z_OFFSET),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //
-  //    // move the player diagonally
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.setPos(%s,5.2,5.2,5.2)",
-  //            getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + 5.2f,
-  //            p.getY() + 5.2f,
-  //            p.getZ() + 5.2f),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //
-  //    // make sure the pitch and yaw are maintained
-  //
-  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.setPos(7.2,7.2,7.2)");
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + 7.2f,
-  //            p.getY() + 7.2f,
-  //            p.getZ() + 7.2f),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //  }
-  //}
-  //
+  @Test
+  public void test_player_getPos() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+
+      Vector3i p = nextTestPosition("player.getPos");
+
+      // make the origin == p
+
+      setUpAtPlayerOrigin(p);
+
+      // TODO: provide comment guidance in the other tests along this lines of this one.
+
+      // player.getPos position result is relative to the origin (spawn location)
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.getPos(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(1, getTestOut().sends.size());
+      assertEquals(
+          String.format("%.1f,%.1f,%.1f",
+              (float) PLAYER_PLACEMENT_X_OFFSET,
+              (float) PLAYER_PLACEMENT_Y_OFFSET,
+              (float) PLAYER_PLACEMENT_Z_OFFSET),
+          getTestOut().sends.get(0));
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.getPos()");
+
+      assertEquals(2, getTestOut().sends.size());
+      assertEquals(
+          String.format("%.1f,%.1f,%.1f",
+              (float) PLAYER_PLACEMENT_X_OFFSET,
+              (float) PLAYER_PLACEMENT_Y_OFFSET,
+              (float) PLAYER_PLACEMENT_Z_OFFSET),
+          getTestOut().sends.get(1));
+    }
+  }
+
+  @Test
+  public void test_player_setPos() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+
+      Vector3i p = nextTestPosition("player.setPos");
+
+      // make the origin == p
+
+      setUpAtPlayerOrigin(p);
+
+      float yaw = 89f;
+      float pitch = -74f;
+      float roll = 0;
+      Vector3d rotation = new Vector3d(yaw, pitch, roll);
+      getGameWrapper().getFirstPlayer().setRotation(rotation);
+
+      // initial position
+
+      assertVector3dEquals(
+          new Vector3d(
+              p.getX() + (double) PLAYER_PLACEMENT_X_OFFSET,
+              p.getY() + (double) PLAYER_PLACEMENT_Y_OFFSET,
+              p.getZ() + (double) PLAYER_PLACEMENT_Z_OFFSET),
+          getGameWrapper().getFirstPlayer().getLocation().getPosition());
+
+      // move the player diagonally
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.setPos(%s,5.2,5.2,5.2)",
+              getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(
+          new Vector3d(
+              p.getX() + 5.2d,
+              p.getY() + 5.2d,
+              p.getZ() + 5.2d),
+          getGameWrapper().getFirstPlayer().getLocation().getPosition());
+
+      // make sure the pitch and yaw are maintained
+
+      assertEquals(rotation, getGameWrapper().getFirstPlayer().getRotation());
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.setPos(7.2,7.2,7.2)");
+
+      assertVector3dEquals(
+          new Vector3d(
+              p.getX() + 7.2d,
+              p.getY() + 7.2d,
+              p.getZ() + 7.2d),
+          getGameWrapper().getFirstPlayer().getLocation().getPosition());
+    }
+  }
+
   //@Test
   //public void test_player_getDirection() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {
