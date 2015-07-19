@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge.dispatch;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
@@ -80,8 +81,10 @@ public class ApiIO {
     //    strings.add(serializeResult(blockEvent));
     //  }
     //  return Joiner.on("|").join(strings);
-    //} else if (objectResult instanceof OriginalApi.BlockPosition) {
-    //  return ((OriginalApi.BlockPosition) objectResult).toApiResult();
+    else if (objectResult instanceof Vector3i) {
+      Vector3i v = ((Vector3i) objectResult);
+      return String.format("%d,%d,%d", v.getX(), v.getY(), v.getZ());
+    }
     //} else if (objectResult instanceof Vector3D) {
     //  return vectorToApiString((Vector3D) objectResult);
     //} else if (objectResult instanceof Position) {

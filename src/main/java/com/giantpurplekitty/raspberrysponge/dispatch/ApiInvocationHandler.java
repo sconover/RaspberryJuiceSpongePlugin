@@ -97,7 +97,8 @@ public class ApiInvocationHandler {
         if (method.getReturnType().equals(Void.TYPE)) {
           method.invoke(apiObject, convertedArgs);
         } else {
-          out.send(ApiIO.serializeResult(method.invoke(apiObject, convertedArgs)));
+          Object result = method.invoke(apiObject, convertedArgs);
+          out.send(ApiIO.serializeResult(result));
         }
         return;
       }

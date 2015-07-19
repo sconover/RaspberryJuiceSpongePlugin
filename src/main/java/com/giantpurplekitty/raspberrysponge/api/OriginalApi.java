@@ -12,9 +12,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
+import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
 
 public class OriginalApi {
   private final GameWrapper gameWrapper;
@@ -90,7 +92,7 @@ public class OriginalApi {
   public int world_getHeight(int x, int z) {
     int relativeX = getOrigin().getX() + x;
     int relativeZ = getOrigin().getZ() + z;
-    int absoluteHeight = gameWrapper.getHighestBlockAt(relativeX, relativeZ);
+    int absoluteHeight = gameWrapper.getHighestBlockYAt(relativeX, relativeZ);
     return absoluteHeight - getOrigin().getY();
   }
 
@@ -117,17 +119,17 @@ public class OriginalApi {
   //  return blockEventList.toArray(new BlockEvent[blockEventList.size()]);
   //}
   //
-  //@RPC("player.getTile")
-  //public BlockPosition player_getTile() {
-  //  //TODO: what do we do here if there's no player logged in?
-  //  return player_getTile(serverWrapper.getFirstPlayer().getName());
-  //}
-  //
-  //@RPC("player.getTile")
-  //public BlockPosition player_getTile(String playerName) {
-  //  return getEntityTileRelativeToOrigin(serverWrapper.getPlayerByName(playerName));
-  //}
-  //
+  @RPC("player.getTile")
+  public Vector3i player_getTile() {
+    //TODO: what do we do here if there's no player logged in?
+    return player_getTile(gameWrapper.getFirstPlayer().getName());
+  }
+
+  @RPC("player.getTile")
+  public Vector3i player_getTile(String playerName) {
+    return getEntityBlockPositionRelativeToOrigin(gameWrapper.getPlayerByName(playerName));
+  }
+
   //@RPC("player.setTile")
   //public void player_setTile(int relativeX, int relativeY, int relativeZ) {
   //  player_setTile(serverWrapper.getFirstPlayer().getName(), relativeX, relativeY, relativeZ);
@@ -149,7 +151,7 @@ public class OriginalApi {
   //
   //@RPC("player.getPos")
   //public Vector3i player_getPos(String playerName) {
-  //  return getEntityPositionRelateiveToOrigin(serverWrapper.getPlayerByName(playerName));
+  //  return getEntityPositionRelativeToOrigin(serverWrapper.getPlayerByName(playerName));
   //}
   //
   //@RPC("player.setPos")
@@ -200,7 +202,7 @@ public class OriginalApi {
   //
   //@RPC("entity.getTile")
   //public BlockPosition entity_getTile(int entityId) {
-  //  return getEntityTileRelativeToOrigin(serverWrapper.getEntityById(entityId));
+  //  return getEntityBlockPositionRelativeToOrigin(serverWrapper.getEntityById(entityId));
   //}
   //
   //@RPC("entity.setTile")
@@ -211,7 +213,7 @@ public class OriginalApi {
   //
   //@RPC("entity.getPos")
   //public Vector3i entity_getPos(int entityId) {
-  //  return getEntityPositionRelateiveToOrigin(serverWrapper.getEntityById(entityId));
+  //  return getEntityPositionRelativeToOrigin(serverWrapper.getEntityById(entityId));
   //}
   //
   //@RPC("entity.setPos")
@@ -243,13 +245,13 @@ public class OriginalApi {
   //  return calculateDirection(entity.getPitch(), entity.getRotation());
   //}
   //
-  //private Vector3i getEntityPositionRelateiveToOrigin(Entity entity) {
-  //  return positionRelativeTo(entity.getLocation(), getOrigin());
+  //private Vector3d getEntityPositionRelativeToOrigin(Entity entity) {
+  //  return blockPositionRelativeTo(entity.getLocation(), getOrigin());
   //}
-  //
-  //private BlockPosition getEntityTileRelativeToOrigin(Entity entity) {
-  //  return BlockPosition.fromPosition(positionRelativeTo(entity.getLocation(), getOrigin()));
-  //}
+
+  private Vector3i getEntityBlockPositionRelativeToOrigin(Entity entity) {
+    return blockPositionRelativeTo(entity.getLocation().getBlockPosition(), getOrigin());
+  }
   //
   //private void teleportEntityRelativeToOriginTo(Entity entity, double x, double y, double z) {
   //  Vector3i newPosition =
@@ -272,7 +274,7 @@ public class OriginalApi {
   //
   //    Block block = blockRightClick.getBlockClicked();
   //    return new BlockEvent(
-  //        positionRelativeTo(block.getLocation(), relativeToPosition),
+  //        blockPositionRelativeTo(block.getLocation(), relativeToPosition),
   //        block.getFaceClicked(),
   //        blockRightClick.getPlayer());
   //  }

@@ -315,7 +315,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
   @Test
   public void test_world_getPlayerEntityIds() throws Exception {
-    if (getGameWrapper().hasPlayers()) {
+    if (shouldRunBecausePlayerIsLoggedIntoGame()) {
       List<String> playerIds = new ArrayList<String>();
       for(Player p: getGameWrapper().getPlayers()) {
         playerIds.add(p.getIdentifier());
@@ -334,7 +334,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
   @Test
   public void test_world_getHeight() throws Exception {
-    if (getGameWrapper().hasPlayers()) {
+    if (shouldRunBecausePlayerIsLoggedIntoGame()) {
       Vector3i p = nextTestPosition("world.getHeight");
   
       // make the origin == p
@@ -350,15 +350,15 @@ public class OriginalApiTest extends InWorldTestSupport {
   
       // sanity check of height
       assertEquals(
-          p.getY() + 6, // height of block y, + 1
-          getGameWrapper().getHighestBlockAt(p.getX() + 3, p.getZ() + 7));
+          p.getY() + 5,
+          getGameWrapper().getHighestBlockYAt(p.getX() + 3, p.getZ() + 7));
   
       // x and z are relative to the origin
       getApiInvocationHandler().handleLine("world.getHeight(3,7)");
   
       // the first block before there's just air, at this x,z location,
       // relative to the player's origin
-      int expectedWorldHeight = 6;
+      int expectedWorldHeight = 5;
   
       assertEquals(
           Lists.newArrayList(String.valueOf(expectedWorldHeight)),
@@ -446,45 +446,41 @@ public class OriginalApiTest extends InWorldTestSupport {
   //        getTestOut().sends);
   //  }
   //}
-  //
-  ////TODO: "entity" methods were clearly intended to be for all entities, not just players.
-  ////convert these tests to test non-player entities.
-  ////then consider basing the player methods on entity methods.
-  //
-  //@Test
-  //public void test_player_getTile() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    Vector3i p = nextTestPosition("player.getTile");
-  //
-  //    // when name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.getTile()");
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    String expected = String.format("%d,%d,%d",
-  //        p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //        p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //        p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
-  //
-  //    assertEquals(Lists.newArrayList(expected, expected), getTestOut().sends);
-  //
-  //    // result is relative to player origin
-  //
-  //    setUpAtPlayerOrigin(new Vector3i(3, 3, 3));
-  //
-  //    getApiInvocationHandler().handleLine("player.getTile()");
-  //
-  //    expected = String.format("%d,%d,%d",
-  //        p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
-  //        p.getY() + PLAYER_PLACEMENT_Y_OFFSET - 3,
-  //        p.getZ() + PLAYER_PLACEMENT_Z_OFFSET - 3);
-  //
-  //    assertEquals(Lists.newArrayList(expected), getTestOut().sends);
-  //  }
-  //}
-  //
+
+  @Test
+  public void test_player_getTile() throws Exception {
+    if (shouldRunBecausePlayerIsLoggedIntoGame()) {
+
+      Vector3i p = nextTestPosition("player.getTile");
+
+      // when name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.getTile()");
+      getApiInvocationHandler().handleLine(
+          String.format("player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      String expected = String.format("%d,%d,%d",
+          p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+          p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+          p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
+
+      assertEquals(Lists.newArrayList(expected, expected), getTestOut().sends);
+
+      // result is relative to player origin
+
+      setUpAtPlayerOrigin(new Vector3i(3, 3, 3));
+
+      getApiInvocationHandler().handleLine("player.getTile()");
+
+      expected = String.format("%d,%d,%d",
+          p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
+          p.getY() + PLAYER_PLACEMENT_Y_OFFSET - 3,
+          p.getZ() + PLAYER_PLACEMENT_Z_OFFSET - 3);
+
+      assertEquals(Lists.newArrayList(expected), getTestOut().sends);
+    }
+  }
+
   //@Test
   //public void test_player_setTile() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {

@@ -133,4 +133,13 @@ public abstract class InWorldTestSupport {
   
     return testPosition;
   }
+
+  public boolean shouldRunBecausePlayerIsLoggedIntoGame() {
+    boolean result = getGameWrapper().hasPlayers();
+    if (!result) {
+      logger.warn("Skipping test because there's no player logged into the game!");
+    }
+    return result;
+  }
+
 }

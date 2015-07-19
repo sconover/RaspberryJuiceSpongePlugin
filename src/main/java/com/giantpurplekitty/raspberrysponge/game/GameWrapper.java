@@ -1,6 +1,7 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +53,13 @@ public class GameWrapper {
     return game.getServer().getOnlinePlayers().iterator().next();
   }
 
+  public Player getPlayerByName(String playerName) {
+    Optional<Player> playerOptional = game.getServer().getPlayer(playerName);
+    checkState(playerOptional.isPresent(),
+        String.format("no player found with name '%s'", playerName));
+    return playerOptional.get();
+  }
+
   public Location getLocation(Vector3i position) {
     return world.getLocation(position);
   }
@@ -78,8 +86,8 @@ public class GameWrapper {
     return playerList;
   }
 
-  public int getHighestBlockAt(int x, int z) {
-    for (int y=world.getBlockMax().getY(); y>=0; y--) {
+  public int getHighestBlockYAt(int x, int z) {
+    for (int y=world.getBlockMax().getY(); y>=1; y--) {
       if (!world.getBlock(x, y, z).getType().equals(BlockTypes.AIR)) {
         return y;
       }
