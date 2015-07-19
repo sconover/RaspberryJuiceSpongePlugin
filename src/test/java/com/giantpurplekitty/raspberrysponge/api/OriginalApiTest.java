@@ -606,7 +606,7 @@ public class OriginalApiTest extends InWorldTestSupport {
           String.format("player.setPos(%s,5.2,5.2,5.2)",
               getGameWrapper().getFirstPlayer().getName()));
 
-      assertEquals(
+      assertVector3dEquals(
           new Vector3d(
               p.getX() + 5.2d,
               p.getY() + 5.2d,
@@ -630,84 +630,96 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
   }
 
-  //@Test
-  //public void test_player_getDirection() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    getGameWrapper().getFirstPlayer().setPitch(47f);
-  //    getGameWrapper().getFirstPlayer().setRotation(97f);
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getDirection(%s)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(1, getTestOut().sends.size());
-  //
-  //    String[] parts = getTestOut().sends.get(0).split(",", 3);
-  //    double vecX = Double.parseDouble(parts[0]);
-  //    double vecY = Double.parseDouble(parts[1]);
-  //    double vecZ = Double.parseDouble(parts[2]);
-  //
-  //    PitchAndRotation pitchAndRotation = vectorToPitchAndRotation(vecX, vecY, vecZ);
-  //    assertEquals(47, (int) pitchAndRotation.pitch);
-  //    assertEquals(97, (int) pitchAndRotation.rotation);
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.getDirection()");
-  //
-  //    assertEquals(2, getTestOut().sends.size());
-  //
-  //    parts = getTestOut().sends.get(1).split(",", 3);
-  //    vecX = Double.parseDouble(parts[0]);
-  //    vecY = Double.parseDouble(parts[1]);
-  //    vecZ = Double.parseDouble(parts[2]);
-  //
-  //    pitchAndRotation = vectorToPitchAndRotation(vecX, vecY, vecZ);
-  //    assertEquals(47, (int) pitchAndRotation.pitch);
-  //    assertEquals(97, (int) pitchAndRotation.rotation);
-  //  }
-  //}
-  //
-  //@Test
-  //public void test_player_getPitch() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //    getGameWrapper().getFirstPlayer().setPitch(49f);
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getPitch(%s)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(1, getTestOut().sends.size());
-  //    assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(0)));
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.getPitch()");
-  //
-  //    assertEquals(2, getTestOut().sends.size());
-  //    assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(1)));
-  //  }
-  //}
-  //
-  //@Test
-  //public void test_player_getRotation() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //    getGameWrapper().getFirstPlayer().setRotation(93f);
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getRotation(%s)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(1, getTestOut().sends.size());
-  //    assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.getRotation()");
-  //
-  //    assertEquals(2, getTestOut().sends.size());
-  //    assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(1)));
-  //  }
-  //}
-  //
+  @Test
+  public void test_player_getDirection() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+
+      float yaw = 97f;
+      float pitch = 47f;
+      float roll = 0;
+      Vector3d rotation = new Vector3d(yaw, pitch, roll);
+      getGameWrapper().getFirstPlayer().setRotation(rotation);
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.getDirection(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(1, getTestOut().sends.size());
+
+      String[] parts = getTestOut().sends.get(0).split(",", 3);
+      double vecX = Double.parseDouble(parts[0]);
+      double vecY = Double.parseDouble(parts[1]);
+      double vecZ = Double.parseDouble(parts[2]);
+
+      PitchAndRotation pitchAndRotation = vectorToPitchAndRotation(vecX, vecY, vecZ);
+      assertEquals(47, (int) pitchAndRotation.pitch);
+      assertEquals(97, (int) pitchAndRotation.rotation);
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.getDirection()");
+
+      assertEquals(2, getTestOut().sends.size());
+
+      parts = getTestOut().sends.get(1).split(",", 3);
+      vecX = Double.parseDouble(parts[0]);
+      vecY = Double.parseDouble(parts[1]);
+      vecZ = Double.parseDouble(parts[2]);
+
+      pitchAndRotation = vectorToPitchAndRotation(vecX, vecY, vecZ);
+      assertEquals(47, (int) pitchAndRotation.pitch);
+      assertEquals(97, (int) pitchAndRotation.rotation);
+    }
+  }
+
+  @Test
+  public void test_player_getPitch() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+
+      float yaw = 0;
+      float pitch = 49f;
+      float roll = 0;
+      Vector3d rotation = new Vector3d(yaw, pitch, roll);
+      getGameWrapper().getFirstPlayer().setRotation(rotation);
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.getPitch(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(1, getTestOut().sends.size());
+      assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(0)));
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.getPitch()");
+
+      assertEquals(2, getTestOut().sends.size());
+      assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(1)));
+    }
+  }
+
+  @Test
+  public void test_player_getRotation() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+      float yaw = 93f;
+      float pitch = 0;
+      float roll = 0;
+      Vector3d rotation = new Vector3d(yaw, pitch, roll);
+      getGameWrapper().getFirstPlayer().setRotation(rotation);
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.getRotation(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(1, getTestOut().sends.size());
+      assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.getRotation()");
+
+      assertEquals(2, getTestOut().sends.size());
+      assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(1)));
+    }
+  }
+
   //@Test
   //public void test_entity_getTile() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {
@@ -886,42 +898,42 @@ public class OriginalApiTest extends InWorldTestSupport {
   //}
   //
   //
-  //static class PitchAndRotation {
-  //  public final double pitch;
-  //  public final double rotation;
-  //
-  //  public PitchAndRotation(double pitch, double rotation) {
-  //    this.pitch = pitch;
-  //    this.rotation = rotation;
-  //  }
-  //}
-  //
-  //// taken from https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Location.java
-  //// "setDirection"
-  //public PitchAndRotation vectorToPitchAndRotation(double vecX, double vecY, double vecZ) {
-  //  /*
-  //   * Sin = Opp / Hyp
-  //   * Cos = Adj / Hyp
-  //   * Tan = Opp / Adj
-  //   *
-  //   * x = -Opp
-  //   * z = Adj
-  //   */
-  //  final double _2PI = 2 * Math.PI;
-  //
-  //  if (vecX == 0 && vecZ == 0) {
-  //    double pitch = vecY > 0 ? -90 : 90;
-  //    return new PitchAndRotation(pitch, 0);
-  //  }
-  //
-  //  double theta = Math.atan2(-vecX, vecZ);
-  //  double yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
-  //
-  //  double x2 = vecX * vecX;
-  //  double z2 = vecZ * vecZ;
-  //  double xz = Math.sqrt(x2 + z2);
-  //  double pitch = (float) Math.toDegrees(Math.atan(-vecY / xz));
-  //
-  //  return new PitchAndRotation(pitch, yaw);
-  //}
+  static class PitchAndRotation {
+    public final double pitch;
+    public final double rotation;
+
+    public PitchAndRotation(double pitch, double rotation) {
+      this.pitch = pitch;
+      this.rotation = rotation;
+    }
+  }
+
+  // taken from https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Location.java
+  // "setDirection"
+  public PitchAndRotation vectorToPitchAndRotation(double vecX, double vecY, double vecZ) {
+    /*
+     * Sin = Opp / Hyp
+     * Cos = Adj / Hyp
+     * Tan = Opp / Adj
+     *
+     * x = -Opp
+     * z = Adj
+     */
+    final double _2PI = 2 * Math.PI;
+
+    if (vecX == 0 && vecZ == 0) {
+      double pitch = vecY > 0 ? -90 : 90;
+      return new PitchAndRotation(pitch, 0);
+    }
+
+    double theta = Math.atan2(-vecX, vecZ);
+    double yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+
+    double x2 = vecX * vecX;
+    double z2 = vecZ * vecZ;
+    double xz = Math.sqrt(x2 + z2);
+    double pitch = (float) Math.toDegrees(Math.atan(-vecY / xz));
+
+    return new PitchAndRotation(pitch, yaw);
+  }
 }

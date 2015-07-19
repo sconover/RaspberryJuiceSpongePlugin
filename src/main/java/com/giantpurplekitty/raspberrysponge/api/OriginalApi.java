@@ -18,6 +18,7 @@ import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
+import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
 
 public class OriginalApi {
   private final GameWrapper gameWrapper;
@@ -49,7 +50,7 @@ public class OriginalApi {
 
   @RPC("world.setBlock")
   public void world_setBlock(int x, int y, int z, short blockTypeId) {
-    world_setBlock(x, y, z, blockTypeId, (short)0);
+    world_setBlock(x, y, z, blockTypeId, (short) 0);
   }
 
   @RPC("world.setBlock")
@@ -59,7 +60,7 @@ public class OriginalApi {
         x, y, z,
         blockTypeId, blockData);
   }
-  
+
   @RPC("world.setBlocks")
   public void world_setBlocks(
       int x1, int y1, int z1,
@@ -70,7 +71,7 @@ public class OriginalApi {
         x2, y2, z2,
         blockTypeId, (short) 0);
   }
-  
+
   @RPC("world.setBlocks")
   public void world_setBlocks(
       int x1, int y1, int z1,
@@ -82,7 +83,7 @@ public class OriginalApi {
         .fetchBlocks(gameWrapper)
         .changeBlocksToTypeWithData(getBlockTypeForIntegerId(blockTypeId), blockData);
   }
-  
+
   @RPC("world.getPlayerEntityIds")
   public Player[] world_getPlayerEntityIds() {
     List<Player> allPlayers = gameWrapper.getPlayers();
@@ -150,7 +151,8 @@ public class OriginalApi {
 
   @RPC("player.getPos")
   public Vector3d player_getPos(String playerName) {
-    return getEntityBlockPositionRelativeToOrigin(gameWrapper.getPlayerByName(playerName)).toDouble();
+    return getEntityBlockPositionRelativeToOrigin(
+        gameWrapper.getPlayerByName(playerName)).toDouble();
   }
 
   @RPC("player.setPos")
@@ -166,85 +168,97 @@ public class OriginalApi {
 
   //// TODO: all of these need javadoc
   //
-  //@RPC("player.getDirection")
-  //public Vector3D player_getDirection() {
-  //  //TODO: what do we do here if there's no player logged in?
-  //  return player_getDirection(serverWrapper.getFirstPlayer().getName());
-  //}
-  //
-  //@RPC("player.getDirection")
-  //public Vector3D player_getDirection(String playerName) {
-  //  return getEntityDirection(serverWrapper.getPlayerByName(playerName));
-  //}
-  //
-  //@RPC("player.getPitch")
-  //public float player_getPitch() {
-  //  //TODO: what do we do here if there's no player logged in?
-  //  return player_getPitch(serverWrapper.getFirstPlayer().getName());
-  //}
-  //
-  //@RPC("player.getPitch")
-  //public float player_getPitch(String playerName) {
-  //  return serverWrapper.getPlayerByName(playerName).getPitch();
-  //}
-  //
-  //@RPC("player.getRotation")
-  //public float player_getRotation() {
-  //  //TODO: what do we do here if there's no player logged in?
-  //  return player_getRotation(serverWrapper.getFirstPlayer().getName());
-  //}
-  //
-  //@RPC("player.getRotation")
-  //public float player_getRotation(String playerName) {
-  //  return serverWrapper.getPlayerByName(playerName).getRotation();
-  //}
-  //
+  @RPC("player.getDirection")
+  public Direction player_getDirection() {
+    //TODO: what do we do here if there's no player logged in?
+    return player_getDirection(gameWrapper.getFirstPlayer().getName());
+  }
+
+  @RPC("player.getDirection")
+  public Direction player_getDirection(String playerName) {
+    return getEntityDirection(gameWrapper.getPlayerByName(playerName));
+  }
+
+  @RPC("player.getPitch")
+  public float player_getPitch() {
+    //TODO: what do we do here if there's no player logged in?
+    return player_getPitch(gameWrapper.getFirstPlayer().getName());
+  }
+
+  @RPC("player.getPitch")
+  public float player_getPitch(String playerName) {
+    return (float) gameWrapper.getPlayerByName(playerName).getRotation().getY();
+  }
+
+  @RPC("player.getRotation")
+  public float player_getRotation() {
+    //TODO: what do we do here if there's no player logged in?
+    return player_getRotation(gameWrapper.getFirstPlayer().getName());
+  }
+
+  @RPC("player.getRotation")
+  public float player_getRotation(String playerName) {
+    return (float) gameWrapper.getPlayerByName(playerName).getRotation().getX();
+  }
+
   //@RPC("entity.getTile")
   //public BlockPosition entity_getTile(int entityId) {
-  //  return getEntityBlockPositionRelativeToOrigin(serverWrapper.getEntityById(entityId));
+  //  return getEntityBlockPositionRelativeToOrigin(gameWrapper.getEntityById(entityId));
   //}
   //
   //@RPC("entity.setTile")
   //public void entity_setTile(int entityId, int relativeX, int relativeY, int relativeZ) {
-  //  teleportEntityRelativeToOriginTo(serverWrapper.getEntityById(entityId), relativeX, relativeY,
+  //  teleportEntityRelativeToOriginTo(gameWrapper.getEntityById(entityId), relativeX, relativeY,
   //      relativeZ);
   //}
   //
   //@RPC("entity.getPos")
   //public Vector3i entity_getPos(int entityId) {
-  //  return getEntityPositionRelativeToOrigin(serverWrapper.getEntityById(entityId));
+  //  return getEntityPositionRelativeToOrigin(gameWrapper.getEntityById(entityId));
   //}
   //
   //@RPC("entity.setPos")
   //public void entity_setPos(int entityId, float relativeX, float relativeY, float relativeZ) {
-  //  teleportEntityRelativeToOriginTo(serverWrapper.getEntityById(entityId), relativeX, relativeY,
+  //  teleportEntityRelativeToOriginTo(gameWrapper.getEntityById(entityId), relativeX, relativeY,
   //      relativeZ);
   //}
   //
   //@RPC("entity.getDirection")
   //public Vector3D entity_getDirection(int entityId) {
-  //  return getEntityDirection(serverWrapper.getEntityById(entityId));
+  //  return getEntityDirection(gameWrapper.getEntityById(entityId));
   //}
   //
   //@RPC("entity.getPitch")
   //public float entity_getPitch(int entityId) {
-  //  return serverWrapper.getEntityById(entityId).getPitch();
+  //  return gameWrapper.getEntityById(entityId).getPitch();
   //}
   //
   //@RPC("entity.getRotation")
   //public float entity_getRotation(int entityId) {
-  //  return serverWrapper.getEntityById(entityId).getRotation();
+  //  return gameWrapper.getEntityById(entityId).getRotation();
   //}
   //
   private Vector3i getOrigin() {
     return gameWrapper.getSpawnPosition();
   }
 
-  //
-  //private Vector3D getEntityDirection(Entity entity) {
-  //  return calculateDirection(entity.getPitch(), entity.getRotation());
-  //}
-  //
+  private Direction getEntityDirection(Entity entity) {
+    return new Direction(
+        calculateDirection(
+            entity.getRotation().getY(),
+            entity.getRotation().getX()));
+  }
+
+  // Direction is just a marker class so we know to render doubles to a different precision
+  // than normal, with Vector3d's
+  public static class Direction {
+    public final Vector3d vector;
+
+    public Direction(Vector3d vector) {
+      this.vector = vector;
+    }
+  }
+
   //private Vector3d getEntityPositionRelativeToOrigin(Entity entity) {
   //  return blockPositionRelativeTo(entity.getLocation(), getOrigin());
   //}
