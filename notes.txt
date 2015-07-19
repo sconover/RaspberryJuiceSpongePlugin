@@ -45,6 +45,13 @@ gpk site
 
 
 =====================
+
+
+http://minecraft.gamepedia.com/Data_values/Block_IDs
+ruby -e 'puts File.read("/tmp/block_types.txt").split("\n").select{|line|line.include?(":")}.map{|line|parts=line.split(/\s+/); label=parts.find{|cell|cell.include?(":")}; li=parts.index(label); "#{label.ljust(40)}= #{parts[li-2]}"}.join("\n")'
+
+
+=====================
 old notes
 
 - systems stuff

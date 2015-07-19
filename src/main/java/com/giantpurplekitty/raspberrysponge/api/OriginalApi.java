@@ -1,9 +1,9 @@
 package com.giantpurplekitty.raspberrysponge.api;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
+import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockType;
@@ -36,11 +36,15 @@ public class OriginalApi {
   //  return ImmutablePair.of(blockType, blockType.getData());
   //}
   //
-  //@RPC("world.setBlock")
-  //public void world_setBlock(int x, int y, int z, short blockTypeId) {
-  //  world_setBlock(x, y, z, blockTypeId, (short) 0);
-  //}
-  //
+  @RPC("world.setBlock")
+  public void world_setBlock(int x, int y, int z, short blockTypeId) {
+    CuboidReference.relativeTo(getOrigin(),
+        new Vector3i(x, y, z),
+        new Vector3i(x, y, z))
+        .fetchBlocks(gameWrapper)
+        .changeBlocksToType(gameWrapper.getTypeById(BlockType.class, blockTypeId));
+  }
+
   //@RPC("world.setBlock")
   //public void world_setBlock(int x, int y, int z, short blockTypeId, short blockData) {
   //  world_setBlocks(

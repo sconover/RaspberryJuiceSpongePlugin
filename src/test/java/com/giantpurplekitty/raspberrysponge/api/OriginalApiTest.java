@@ -4,8 +4,11 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.google.common.collect.Lists;
+import java.awt.Color;
 import org.junit.Test;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.manipulator.ColoredData;
 import org.spongepowered.api.world.Location;
 
 import static junit.framework.TestCase.assertTrue;
@@ -66,80 +69,284 @@ public class OriginalApiTest extends InWorldTestSupport {
         getTestOut().sends);
   }
 
-  //@Test
-  //public void test_world_getBlockWithData() throws Exception {
-  //  Position p = nextTestPosition("world.getBlockWithData");
-  //
-  //  Block block = getServerWrapper().getWorld().getBlockAt(p);
-  //  block.setType(BlockType.RedstoneBlock);
-  //  block.update();
-  //
-  //  Block block2 = block.getRelative(1, 0, 0);
-  //  block2.setType(BlockType.LimeWool);
-  //  block2.update();
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.getBlockWithData(%d,%d,%d)",
-  //          (int) p.getX(),
-  //          (int) p.getY(),
-  //          (int) p.getZ()));
-  //
-  //  assertEquals(
-  //      String.format("%d,%d",
-  //          BlockType.RedstoneBlock.getId(),
-  //          BlockType.RedstoneBlock.getData()),
-  //      getTestOut().sends.get(0));
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.getBlockWithData(%d,%d,%d)",
-  //          (int) p.getX() + 1,
-  //          (int) p.getY(),
-  //          (int) p.getZ()));
-  //
-  //  assertEquals(
-  //      String.format("%d,%d",
-  //          BlockType.LimeWool.getId(),
-  //          BlockType.LimeWool.getData()),
-  //      getTestOut().sends.get(1));
-  //}
-  //
-  //@Test
-  //public void test_world_setBlock() throws Exception {
-  //  Position p = nextTestPosition("world.setBlock");
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.setBlock(%d,%d,%d,%d)",
-  //          (int) p.getX(),
-  //          (int) p.getY(),
-  //          (int) p.getZ(),
-  //          BlockType.RedstoneBlock.getId()));
-  //
-  //  Block block = getServerWrapper().getWorld().getBlockAt(p);
-  //  assertEquals(BlockType.RedstoneBlock, block.getType());
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.setBlock(%d,%d,%d,%d,%d)",
-  //          (int) p.getX() + 1,
-  //          (int) p.getY(),
-  //          (int) p.getZ(),
-  //          BlockType.LimeWool.getId(),
-  //          BlockType.LimeWool.getData()));
-  //
-  //  Block block2 = getServerWrapper().getWorld().getBlockAt(
-  //      (int) p.getX() + 1,
-  //      (int) p.getY(),
-  //      (int) p.getZ());
-  //
-  //  assertEquals(BlockType.LimeWool, block2.getType());
-  //  assertEquals(BlockType.LimeWool.getData(), block2.getType().getData());
-  //}
-  //
+  // TODO: test this stuff
+  /**
+
+   .id
+   "The id (or type) of block"
+
+   AIR                 = Block(0)
+   STONE               = Block(1)
+   GRASS               = Block(2)
+   DIRT                = Block(3)
+   COBBLESTONE         = Block(4)
+   WOOD_PLANKS         = Block(5)
+   SAPLING             = Block(6)
+   BEDROCK             = Block(7)
+   WATER_FLOWING       = Block(8)
+   WATER               = WATER_FLOWING
+   WATER_STATIONARY    = Block(9)
+   LAVA_FLOWING        = Block(10)
+   LAVA                = LAVA_FLOWING
+   LAVA_STATIONARY     = Block(11)
+   SAND                = Block(12)
+   GRAVEL              = Block(13)
+   GOLD_ORE            = Block(14)
+   IRON_ORE            = Block(15)
+   COAL_ORE            = Block(16)
+   WOOD                = Block(17)
+   LEAVES              = Block(18)
+   GLASS               = Block(20)
+   LAPIS_LAZULI_ORE    = Block(21)
+   LAPIS_LAZULI_BLOCK  = Block(22)
+   SANDSTONE           = Block(24)
+   BED                 = Block(26)
+   COBWEB              = Block(30)
+   GRASS_TALL          = Block(31)
+   WOOL                = Block(35)
+   FLOWER_YELLOW       = Block(37)
+   FLOWER_CYAN         = Block(38)
+   MUSHROOM_BROWN      = Block(39)
+   MUSHROOM_RED        = Block(40)
+   GOLD_BLOCK          = Block(41)
+   IRON_BLOCK          = Block(42)
+   STONE_SLAB_DOUBLE   = Block(43)
+   STONE_SLAB          = Block(44)
+   BRICK_BLOCK         = Block(45)
+   TNT                 = Block(46)
+   BOOKSHELF           = Block(47)
+   MOSS_STONE          = Block(48)
+   OBSIDIAN            = Block(49)
+   TORCH               = Block(50)
+   FIRE                = Block(51)
+   STAIRS_WOOD         = Block(53)
+   CHEST               = Block(54)
+   DIAMOND_ORE         = Block(56)
+   DIAMOND_BLOCK       = Block(57)
+   CRAFTING_TABLE      = Block(58)
+   FARMLAND            = Block(60)
+   FURNACE_INACTIVE    = Block(61)
+   FURNACE_ACTIVE      = Block(62)
+   DOOR_WOOD           = Block(64)
+   LADDER              = Block(65)
+   STAIRS_COBBLESTONE  = Block(67)
+   DOOR_IRON           = Block(71)
+   REDSTONE_ORE        = Block(73)
+   SNOW                = Block(78)
+   ICE                 = Block(79)
+   SNOW_BLOCK          = Block(80)
+   CACTUS              = Block(81)
+   CLAY                = Block(82)
+   SUGAR_CANE          = Block(83)
+   FENCE               = Block(85)
+   GLOWSTONE_BLOCK     = Block(89)
+   BEDROCK_INVISIBLE   = Block(95)
+   STONE_BRICK         = Block(98)
+   GLASS_PANE          = Block(102)
+   MELON               = Block(103)
+   FENCE_GATE          = Block(107)
+   GLOWING_OBSIDIAN    = Block(246)
+   NETHER_REACTOR_CORE = Block(247)
+
+   .data
+   "The data (or sub-type) of a block"
+
+   Data Values of blocks:
+   WOOL:
+   0: White
+   1: Orange
+   2: Magenta
+   3: Light Blue
+   4: Yellow
+   5: Lime
+   6: Pink
+   7: Grey
+   8: Light grey
+   9: Cyan
+   10: Purple
+   11: Blue
+   12: Brown
+   13: Green
+   14: Red
+   15:Black
+
+   WOOD:
+   0: Oak (up/down)
+   1: Spruce (up/down)
+   2: Birch (up/down)
+   (below not on Pi)
+   3: Jungle (up/down)
+   4: Oak (east/west)
+   5: Spruce (east/west)
+   6: Birch (east/west)
+   7: Jungle (east/west)
+   8: Oak (north/south)
+   9: Spruce (north/south)
+   10: Birch (north/south)
+   11: Jungle (north/south)
+   12: Oak (only bark)
+   13: Spruce (only bark)
+   14: Birch (only bark)
+   15: Jungle (only bark)
+
+   WOOD_PLANKS (Not on Pi):
+   0: Oak
+   1: Spruce
+   2: Birch
+   3: Jungle
+
+   SAPLING:
+   0: Oak
+   1: Spruce
+   2: Birch
+   3: Jungle (Not on Pi)
+
+   GRASS_TALL:
+   0: Shrub
+   1: Grass
+   2: Fern
+   3: Grass (color affected by biome) (Not on Pi)
+
+   TORCH:
+   1: Pointing east
+   2: Pointing west
+   3: Pointing south
+   4: Pointing north
+   5: Facing up
+
+   STONE_BRICK:
+   0: Stone brick
+   1: Mossy stone brick
+   2: Cracked stone brick
+   3: Chiseled stone brick
+
+   STONE_SLAB / STONE_SLAB_DOUBLE:
+   0: Stone
+   1: Sandstone
+   2: Wooden
+   3: Cobblestone
+   4: Brick
+   5: Stone Brick
+   Below - not on Pi
+   6: Nether Brick
+   7: Quartz
+
+   Not on Pi
+   SNOW_BLOCK:
+   0-7: Height of snow, 0 being the lowest, 7 being the highest.
+
+   TNT:
+   0: Inactive
+   1: Ready to explode
+
+   LEAVES:
+   1: Oak leaves
+   2: Spruce leaves
+   3: Birch leaves
+
+   SANDSTONE:
+   0: Sandstone
+   1: Chiseled sandstone
+   2: Smooth sandstone
+
+   STAIRS_[COBBLESTONE, WOOD]:
+   0: Ascending east
+   1: Ascending west
+   2: Ascending south
+   3: Ascending north
+   4: Ascending east (upside down)
+   5: Ascending west (upside down)
+   6: Ascending south (upside down)
+   7: Ascending north (upside down)
+
+   LADDERS, CHESTS, FURNACES:
+   2: Facing north
+   3: Facing south
+   4: Facing west
+   5: Facing east
+
+   [WATER, LAVA]_STATIONARY:
+   0-7: Level of the water, 0 being the highest, 7 the lowest
+
+   NETHER_REACTOR_CORE:
+   0: Unused
+   1: Active
+   2: Stopped / used up
+   */
+
+  //TODO - disabled.
+  // turn the api notes above into enums
+  // then iterate through and make sure various types of things match up
+  // will probably need to establish a static mapping of internal -> external types
+  public void test_world_getBlockWithData() throws Exception {
+    Vector3i p = nextTestPosition("world.getBlockWithData");
+  
+    Location block = getGameWrapper().getLocation(p);
+    block.setBlockType(BlockTypes.GLOWSTONE);
+
+    Location block2 = block.add(1, 0, 0);
+    BlockState woolBlock = BlockTypes.WOOL.getDefaultState();
+    ColoredData coloredData =
+        woolBlock.getManipulator(ColoredData.class).get().setColor(Color.GREEN);
+    block2.setBlock(woolBlock);
+
+    getApiInvocationHandler().handleLine(
+        String.format("world.getBlockWithData(%d,%d,%d)", p.getX(), p.getY(), p.getZ()));
+
+    int glowstoneRaspberryApiBlockId = 89;
+    assertEquals(
+        String.format("%d,%d", glowstoneRaspberryApiBlockId, 0),
+        getTestOut().sends.get(0));
+  
+    getApiInvocationHandler().handleLine(
+        String.format("world.getBlockWithData(%d,%d,%d)", p.getX() + 1, p.getY(), p.getZ()));
+
+    int woolRaspberryApiBlockId = 35;
+    assertEquals(
+        String.format("%d,%d",
+            BlockTypes.WOOL.getId(),
+            woolBlock.getManipulator(ColoredData.class).get().getColor()),
+        getTestOut().sends.get(1));
+  }
+  
+  //TODO as above, use external types. This test might be wrong, re: id's
+  public void test_world_setBlock() throws Exception {
+    Vector3i p = nextTestPosition("world.setBlock");
+  
+    getApiInvocationHandler().handleLine(
+        String.format("world.setBlock(%d,%d,%d,%s)",
+            p.getX(),
+            p.getY(),
+            p.getZ(),
+            BlockTypes.REDSTONE_BLOCK.getId()));
+  
+    Location block = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
+
+    //TODO: disabled until I get the type/data stuff figured out, as noted above
+    //getApiInvocationHandler().handleLine(
+    //    String.format("world.setBlock(%d,%d,%d,%d,%d)",
+    //        p.getX() + 1,
+    //        p.getY(),
+    //        p.getZ(),
+    //        BlockTypes.LimeWool.getId(),
+    //        BlockTypes.LimeWool.getData()));
+    //
+    //Location block2 = getGameWrapper().getLocation(
+    //    p.getX() + 1,
+    //    p.getY(),
+    //    p.getZ());
+    //
+    //assertEquals(BlockTypes.LimeWool, block2.getType());
+    //assertEquals(BlockTypes.LimeWool.getData(), block2.getType().getData());
+  }
+  
   //@Test
   //public void test_world_setBlocks_simple() throws Exception {
-  //  Position cubeCorner = nextTestPosition("world.setBlocks simple");
+  //  Vector3i cubeCorner = nextTestPosition("world.setBlocks simple");
   //
-  //  Position otherCubeCorner =
-  //      new Position(
+  //  Vector3i otherCubeCorner =
+  //      new Vector3i(
   //          cubeCorner.getX() + 1,
   //          cubeCorner.getY() + 1,
   //          cubeCorner.getZ() + 1);
@@ -152,44 +359,44 @@ public class OriginalApiTest extends InWorldTestSupport {
   //          (int) otherCubeCorner.getX(),
   //          (int) otherCubeCorner.getY(),
   //          (int) otherCubeCorner.getZ(),
-  //          BlockType.RedstoneBlock.getId()));
+  //          BlockTypes.REDSTONE_BLOCK.getId()));
   //
   //  Map<BlockType, List<Block>> blockTypeToBlocks =
   //      CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
-  //          .fetchBlocks(getServerWrapper().getWorld())
+  //          .fetchBlocks(getGameWrapper().getWorld())
   //          .blockTypeToBlocks();
   //
   //  // there's a 2x2x2 set of redstone blocks
-  //  assertEquals(Sets.newHashSet(BlockType.RedstoneBlock), blockTypeToBlocks.keySet());
-  //  assertEquals(8, blockTypeToBlocks.get(BlockType.RedstoneBlock).size());
+  //  assertEquals(Sets.newHashSet(BlockTypes.REDSTONE_BLOCK), blockTypeToBlocks.keySet());
+  //  assertEquals(8, blockTypeToBlocks.get(BlockTypes.REDSTONE_BLOCK).size());
   //
-  //  Position pastOtherCubeCorner =
-  //      new Position(
+  //  Vector3i pastOtherCubeCorner =
+  //      new Vector3i(
   //          cubeCorner.getX() + 2,
   //          cubeCorner.getY() + 2,
   //          cubeCorner.getZ() + 2);
   //
   //  Map<BlockType, List<Block>> blockTypeToBlocks2 =
   //      CuboidReference.fromCorners(cubeCorner, pastOtherCubeCorner)
-  //          .fetchBlocks(getServerWrapper().getWorld())
+  //          .fetchBlocks(getGameWrapper().getWorld())
   //          .blockTypeToBlocks();
   //
   //  // out of this 3x3x3 cube, there's a 2x2x2 set of redstone blocks,
   //  // and the rest is air
   //  assertEquals(Sets.newHashSet(
-  //          BlockType.RedstoneBlock,
-  //          BlockType.Air),
+  //          BlockTypes.REDSTONE_BLOCK,
+  //          BlockTypes.Air),
   //      blockTypeToBlocks2.keySet());
-  //  assertEquals(8, blockTypeToBlocks2.get(BlockType.RedstoneBlock).size());
-  //  assertEquals(27 - 8, blockTypeToBlocks2.get(BlockType.Air).size());
+  //  assertEquals(8, blockTypeToBlocks2.get(BlockTypes.REDSTONE_BLOCK).size());
+  //  assertEquals(27 - 8, blockTypeToBlocks2.get(BlockTypes.Air).size());
   //}
   //
   //@Test
   //public void test_world_setBlocks_withData_whichIsTheColor() throws Exception {
-  //  Position cubeCorner = nextTestPosition("world.setBlocks with data");
+  //  Vector3i cubeCorner = nextTestPosition("world.setBlocks with data");
   //
-  //  Position otherCubeCorner =
-  //      new Position(
+  //  Vector3i otherCubeCorner =
+  //      new Vector3i(
   //          cubeCorner.getX() + 1,
   //          cubeCorner.getY() + 1,
   //          cubeCorner.getZ() + 1);
@@ -202,24 +409,24 @@ public class OriginalApiTest extends InWorldTestSupport {
   //          (int) otherCubeCorner.getX(),
   //          (int) otherCubeCorner.getY(),
   //          (int) otherCubeCorner.getZ(),
-  //          BlockType.LimeWool.getId(),
-  //          BlockType.LimeWool.getData()));
+  //          BlockTypes.LimeWool.getId(),
+  //          BlockTypes.LimeWool.getData()));
   //
   //  Map<BlockType, List<Block>> blockTypeToBlocks =
   //      CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
-  //          .fetchBlocks(getServerWrapper().getWorld())
+  //          .fetchBlocks(getGameWrapper().getWorld())
   //          .blockTypeToBlocks();
   //
   //  // there's a 2x2x2 set of green wool blocks
-  //  assertEquals(Sets.newHashSet(BlockType.LimeWool), blockTypeToBlocks.keySet());
-  //  assertEquals(8, blockTypeToBlocks.get(BlockType.LimeWool).size());
+  //  assertEquals(Sets.newHashSet(BlockTypes.LimeWool), blockTypeToBlocks.keySet());
+  //  assertEquals(8, blockTypeToBlocks.get(BlockTypes.LimeWool).size());
   //}
   //
   //@Test
   //public void test_world_getPlayerEntityIds() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    String expectedPlayerIdsStr = getServerWrapper().getPlayers().stream()
+  //    String expectedPlayerIdsStr = getGameWrapper().getPlayers().stream()
   //        .map(Player::getID)
   //        .map(String::valueOf)
   //        .collect(Collectors.joining("|"));
@@ -234,25 +441,25 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_world_getHeight() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
-  //    Position p = nextTestPosition("world.getHeight");
+  //  if (getGameWrapper().hasPlayers()) {
+  //    Vector3i p = nextTestPosition("world.getHeight");
   //
   //    // make the origin == p
   //
   //    setUpAtPlayerOrigin(p);
   //
-  //    Block block =
-  //        getServerWrapper().getWorld().getBlockAt(
+  //    Location block =
+  //        getGameWrapper().getLocation(
   //            p.getBlockX() + 3,
   //            p.getBlockY() + 5,
   //            p.getBlockZ() + 7);
-  //    block.setType(BlockType.RedstoneBlock);
+  //    block.setBlockType(BlockTypes.REDSTONE_BLOCK);
   //    block.update();
   //
   //    // sanity check of height
   //    assertEquals(
   //        p.getBlockY() + 6, // height of block y, + 1
-  //        getServerWrapper().getWorld().getHighestBlockAt(p.getBlockX() + 3, p.getBlockZ() + 7));
+  //        getGameWrapper().getWorld().getHighestBlockAt(p.getBlockX() + 3, p.getBlockZ() + 7));
   //
   //    // x and z are relative to the origin
   //    getApiInvocationHandler().handleLine("world.getHeight(3,7)");
@@ -269,37 +476,37 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_events_block_hits() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
   //    // TODO: make PlayerWrapper?
-  //    makeFirstPlayerWieldItem(getServerWrapper().getFirstPlayer(), ItemType.GoldSword);
+  //    makeFirstPlayerWieldItem(getGameWrapper().getFirstPlayer(), ItemType.GoldSword);
   //
-  //    Position p = nextTestPosition("block hit event");
+  //    Vector3i p = nextTestPosition("block hit event");
   //
   //    getApiInvocationHandler().handleLine(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
-  //            (int) p.getX(),
-  //            (int) p.getY(),
-  //            (int) p.getZ(),
-  //            BlockType.RedstoneBlock.getId()));
+  //            p.getX(),
+  //            p.getY(),
+  //            p.getZ(),
+  //            BlockTypes.REDSTONE_BLOCK.getId()));
   //
-  //    Block b = getServerWrapper().getWorld().getBlockAt(p);
+  //    Block b = getGameWrapper().getLocation(p);
   //
   //    getPluginListener().onBlockHit(
-  //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
+  //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //    getPluginListener().onBlockHit(
-  //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
+  //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
   //    getApiInvocationHandler().handleLine("events.block.hits()");
   //
   //    int expectedFace = 7;
   //
   //    String expectedEventOutput = String.format("%d,%d,%d,%d,%d",
-  //        (int) p.getX(),
-  //        (int) p.getY(),
-  //        (int) p.getZ(),
+  //        p.getX(),
+  //        p.getY(),
+  //        p.getZ(),
   //        expectedFace,
-  //        getServerWrapper().getFirstPlayer().getID());
+  //        getGameWrapper().getFirstPlayer().getID());
   //
   //    assertEquals(
   //        Lists.newArrayList(expectedEventOutput + "|" + expectedEventOutput),
@@ -309,29 +516,29 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_events_clear() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
   //    // TODO: make PlayerWrapper?
-  //    makeFirstPlayerWieldItem(getServerWrapper().getFirstPlayer(), ItemType.GoldSword);
+  //    makeFirstPlayerWieldItem(getGameWrapper().getFirstPlayer(), ItemType.GoldSword);
   //
-  //    Position p = nextTestPosition("block hit event");
+  //    Vector3i p = nextTestPosition("block hit event");
   //
   //    getApiInvocationHandler().handleLine(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
-  //            (int) p.getX(),
-  //            (int) p.getY(),
-  //            (int) p.getZ(),
-  //            BlockType.RedstoneBlock.getId()));
+  //            p.getX(),
+  //            p.getY(),
+  //            p.getZ(),
+  //            BlockTypes.REDSTONE_BLOCK.getId()));
   //
-  //    Block b = getServerWrapper().getWorld().getBlockAt(p);
+  //    Block b = getGameWrapper().getLocation(p);
   //
   //    getPluginListener().onBlockHit(
-  //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
+  //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
   //    getApiInvocationHandler().handleLine("events.clear()");
   //
   //    getPluginListener().onBlockHit(
-  //        new BlockRightClickHook(getServerWrapper().getFirstPlayer(), b));
+  //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
   //    getApiInvocationHandler().handleLine("events.block.hits()");
   //
@@ -339,11 +546,11 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    assertEquals(
   //        Lists.newArrayList(String.format("%d,%d,%d,%d,%d",
-  //            (int) p.getX(),
-  //            (int) p.getY(),
-  //            (int) p.getZ(),
+  //            p.getX(),
+  //            p.getY(),
+  //            p.getZ(),
   //            expectedFace,
-  //            getServerWrapper().getFirstPlayer().getID())),
+  //            getGameWrapper().getFirstPlayer().getID())),
   //        getTestOut().sends);
   //  }
   //}
@@ -354,33 +561,33 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_player_getTile() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("player.getTile");
+  //    Vector3i p = nextTestPosition("player.getTile");
   //
   //    // when name is blank, default to first player
   //
   //    getApiInvocationHandler().handleLine("player.getTile()");
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getTile(%s)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    String expected = String.format("%d,%d,%d",
-  //        (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //        (int) p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //        (int) p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
+  //        p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+  //        p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+  //        p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
   //
   //    assertEquals(Lists.newArrayList(expected, expected), getTestOut().sends);
   //
   //    // result is relative to player origin
   //
-  //    setUpAtPlayerOrigin(new Position(3, 3, 3));
+  //    setUpAtPlayerOrigin(new Vector3i(3, 3, 3));
   //
   //    getApiInvocationHandler().handleLine("player.getTile()");
   //
   //    expected = String.format("%d,%d,%d",
-  //        (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
-  //        (int) p.getY() + PLAYER_PLACEMENT_Y_OFFSET - 3,
-  //        (int) p.getZ() + PLAYER_PLACEMENT_Z_OFFSET - 3);
+  //        p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
+  //        p.getY() + PLAYER_PLACEMENT_Y_OFFSET - 3,
+  //        p.getZ() + PLAYER_PLACEMENT_Z_OFFSET - 3);
   //
   //    assertEquals(Lists.newArrayList(expected), getTestOut().sends);
   //  }
@@ -388,61 +595,61 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_player_setTile() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("player.setTile");
+  //    Vector3i p = nextTestPosition("player.setTile");
   //
   //    // make the origin == p
   //
   //    setUpAtPlayerOrigin(p);
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(-74f);
-  //    getServerWrapper().getFirstPlayer().setRotation(89f);
+  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
+  //    getGameWrapper().getFirstPlayer().setRotation(89f);
   //
   //    // initial position
   //
   //    assertEquals(
-  //        new Position(
-  //            (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //            (int) p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //            (int) p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        new Vector3i(
+  //            p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+  //            p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+  //            p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // move the player diagonally
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.setTile(%s,5,5,5)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.setTile(%s,5,5,5)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(
-  //        new Position(
-  //            (int) p.getX() + 5,
-  //            (int) p.getY() + 5,
-  //            (int) p.getZ() + 5),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        new Vector3i(
+  //            p.getX() + 5,
+  //            p.getY() + 5,
+  //            p.getZ() + 5),
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // make sure the pitch and yaw are maintained
   //
-  //    assertEquals(-74, (int) getServerWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getServerWrapper().getFirstPlayer().getRotation());
+  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
+  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
   //
   //    // when player name is blank, default to first player
   //
   //    getApiInvocationHandler().handleLine("player.setTile(7,7,7)");
   //
   //    assertEquals(
-  //        new Position(
-  //            (int) p.getX() + 7,
-  //            (int) p.getY() + 7,
-  //            (int) p.getZ() + 7),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        new Vector3i(
+  //            p.getX() + 7,
+  //            p.getY() + 7,
+  //            p.getZ() + 7),
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //  }
   //}
   //
   //@Test
   //public void test_player_getPos() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("player.getPos");
+  //    Vector3i p = nextTestPosition("player.getPos");
   //
   //    // make the origin == p
   //
@@ -453,7 +660,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    // player.getPos position result is relative to the origin (spawn location)
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getPos(%s)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.getPos(%s)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(
@@ -479,68 +686,68 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_player_setPos() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("player.setPos");
+  //    Vector3i p = nextTestPosition("player.setPos");
   //
-  //    Position pMid = new Position(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
+  //    Vector3i pMid = new Vector3i(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
   //
   //    // make the origin == p
   //
   //    setUpAtPlayerOrigin(pMid);
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(-74f);
-  //    getServerWrapper().getFirstPlayer().setRotation(89f);
+  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
+  //    getGameWrapper().getFirstPlayer().setRotation(89f);
   //
   //    // initial position
   //
   //    assertEquals(
-  //        new Position(
+  //        new Vector3i(
   //            p.getX() + (double) PLAYER_PLACEMENT_X_OFFSET,
   //            p.getY() + (double) PLAYER_PLACEMENT_Y_OFFSET,
   //            p.getZ() + (double) PLAYER_PLACEMENT_Z_OFFSET),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // move the player diagonally
   //
   //    getApiInvocationHandler().handleLine(
   //        String.format("player.setPos(%s,5.2,5.2,5.2)",
-  //            getServerWrapper().getFirstPlayer().getName()));
+  //            getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(
-  //        new Position(
+  //        new Vector3i(
   //            p.getX() + 5.2f,
   //            p.getY() + 5.2f,
   //            p.getZ() + 5.2f),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // make sure the pitch and yaw are maintained
   //
-  //    assertEquals(-74, (int) getServerWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getServerWrapper().getFirstPlayer().getRotation());
+  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
+  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
   //
   //    // when player name is blank, default to first player
   //
   //    getApiInvocationHandler().handleLine("player.setPos(7.2,7.2,7.2)");
   //
   //    assertEquals(
-  //        new Position(
+  //        new Vector3i(
   //            p.getX() + 7.2f,
   //            p.getY() + 7.2f,
   //            p.getZ() + 7.2f),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //  }
   //}
   //
   //@Test
   //public void test_player_getDirection() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(47f);
-  //    getServerWrapper().getFirstPlayer().setRotation(97f);
+  //    getGameWrapper().getFirstPlayer().setPitch(47f);
+  //    getGameWrapper().getFirstPlayer().setRotation(97f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getDirection(%s)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.getDirection(%s)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //
@@ -572,11 +779,11 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_player_getPitch() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
-  //    getServerWrapper().getFirstPlayer().setPitch(49f);
+  //  if (getGameWrapper().hasPlayers()) {
+  //    getGameWrapper().getFirstPlayer().setPitch(49f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getPitch(%s)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.getPitch(%s)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(0)));
@@ -592,11 +799,11 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_player_getRotation() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
-  //    getServerWrapper().getFirstPlayer().setRotation(93f);
+  //  if (getGameWrapper().hasPlayers()) {
+  //    getGameWrapper().getFirstPlayer().setRotation(93f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("player.getRotation(%s)", getServerWrapper().getFirstPlayer().getName()));
+  //        String.format("player.getRotation(%s)", getGameWrapper().getFirstPlayer().getName()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));
@@ -612,17 +819,17 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_entity_getTile() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("entity.getTile");
+  //    Vector3i p = nextTestPosition("entity.getTile");
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.getTile(%d)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.getTile(%d)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    String expected = String.format("%d,%d,%d",
-  //        (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //        (int) p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //        (int) p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
+  //        p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+  //        p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+  //        p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
   //
   //    assertEquals(Lists.newArrayList(expected), getTestOut().sends);
   //  }
@@ -630,50 +837,50 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_entity_setTile() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("entity.setTile");
+  //    Vector3i p = nextTestPosition("entity.setTile");
   //
   //    // make the origin == p
   //
   //    setUpAtPlayerOrigin(p);
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(-74f);
-  //    getServerWrapper().getFirstPlayer().setRotation(89f);
+  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
+  //    getGameWrapper().getFirstPlayer().setRotation(89f);
   //
   //    // initial position
   //
   //    assertEquals(
-  //        new Position(
-  //            (int) p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //            (int) p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //            (int) p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        new Vector3i(
+  //            p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+  //            p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+  //            p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // move the entity diagonally
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.setTile(%d,5,5,5)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.setTile(%d,5,5,5)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(
-  //        new Position(
-  //            (int) p.getX() + 5,
-  //            (int) p.getY() + 5,
-  //            (int) p.getZ() + 5),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        new Vector3i(
+  //            p.getX() + 5,
+  //            p.getY() + 5,
+  //            p.getZ() + 5),
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // make sure the pitch and yaw are maintained
   //
-  //    assertEquals(-74, (int) getServerWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getServerWrapper().getFirstPlayer().getRotation());
+  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
+  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
   //  }
   //}
   //
   //@Test
   //public void test_entity_getPos() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("entity.getPos");
+  //    Vector3i p = nextTestPosition("entity.getPos");
   //
   //    // make the origin == p
   //
@@ -682,7 +889,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    // entity.getPos position result is relative to the origin (spawn location)
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.getPos(%d)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.getPos(%d)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(
@@ -696,57 +903,57 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_entity_setPos() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    Position p = nextTestPosition("entity.setPos");
+  //    Vector3i p = nextTestPosition("entity.setPos");
   //
-  //    Position pMid = new Position(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
+  //    Vector3i pMid = new Vector3i(p.getX() + 0.5f, p.getY() + 0.5f, p.getZ() + 0.5f);
   //
   //    // make the origin == p
   //
   //    setUpAtPlayerOrigin(pMid);
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(-74f);
-  //    getServerWrapper().getFirstPlayer().setRotation(89f);
+  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
+  //    getGameWrapper().getFirstPlayer().setRotation(89f);
   //
   //    // initial position
   //
   //    assertEquals(
-  //        new Position(
+  //        new Vector3i(
   //            p.getX() + (double) PLAYER_PLACEMENT_X_OFFSET,
   //            p.getY() + (double) PLAYER_PLACEMENT_Y_OFFSET,
   //            p.getZ() + (double) PLAYER_PLACEMENT_Z_OFFSET),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // move the entity diagonally
   //
   //    getApiInvocationHandler().handleLine(
   //        String.format("entity.setPos(%d,5.2,5.2,5.2)",
-  //            getServerWrapper().getFirstPlayer().getID()));
+  //            getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(
-  //        new Position(
+  //        new Vector3i(
   //            p.getX() + 5.2f,
   //            p.getY() + 5.2f,
   //            p.getZ() + 5.2f),
-  //        getServerWrapper().getFirstPlayer().getPosition());
+  //        getGameWrapper().getFirstPlayer().getPosition());
   //
   //    // make sure the pitch and yaw are maintained
   //
-  //    assertEquals(-74, (int) getServerWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getServerWrapper().getFirstPlayer().getRotation());
+  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
+  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
   //  }
   //}
   //
   //@Test
   //public void test_entity_getDirection() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
+  //  if (getGameWrapper().hasPlayers()) {
   //
-  //    getServerWrapper().getFirstPlayer().setPitch(47f);
-  //    getServerWrapper().getFirstPlayer().setRotation(97f);
+  //    getGameWrapper().getFirstPlayer().setPitch(47f);
+  //    getGameWrapper().getFirstPlayer().setRotation(97f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.getDirection(%d)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.getDirection(%d)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //
@@ -763,11 +970,11 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_entity_getPitch() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
-  //    getServerWrapper().getFirstPlayer().setPitch(49f);
+  //  if (getGameWrapper().hasPlayers()) {
+  //    getGameWrapper().getFirstPlayer().setPitch(49f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.getPitch(%d)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.getPitch(%d)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(0)));
@@ -776,11 +983,11 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //@Test
   //public void test_entity_getRotation() throws Exception {
-  //  if (getServerWrapper().hasPlayers()) {
-  //    getServerWrapper().getFirstPlayer().setRotation(93f);
+  //  if (getGameWrapper().hasPlayers()) {
+  //    getGameWrapper().getFirstPlayer().setRotation(93f);
   //
   //    getApiInvocationHandler().handleLine(
-  //        String.format("entity.getRotation(%d)", getServerWrapper().getFirstPlayer().getID()));
+  //        String.format("entity.getRotation(%d)", getGameWrapper().getFirstPlayer().getID()));
   //
   //    assertEquals(1, getTestOut().sends.size());
   //    assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));

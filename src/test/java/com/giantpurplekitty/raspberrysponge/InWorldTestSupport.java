@@ -22,8 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class InWorldTestSupport {
 
   // sorry, I'm not going to mess around with test DI for this, right now, or maybe ever. -sconover
-  public static Game game;
-  public static Logger logger;
+  private static Game game;
+  private static Logger logger;
+
+  public static void init(Game game, Logger logger) {
+    InWorldTestSupport.game = game;
+    InWorldTestSupport.logger = logger;
+  }
 
   public static final int PLAYER_PLACEMENT_X_OFFSET = 0;
   public static final int PLAYER_PLACEMENT_Y_OFFSET = 10;

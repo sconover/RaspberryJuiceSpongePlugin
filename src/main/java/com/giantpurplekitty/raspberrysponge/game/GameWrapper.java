@@ -1,9 +1,14 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Throwables;
+import java.io.IOException;
+import java.util.Properties;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
@@ -15,11 +20,19 @@ public class GameWrapper {
   private final Game game;
   private final World world;
   private final Server server;
+  private final Properties blockTypeStringIdToIntId;
 
   public GameWrapper(Game game) {
     this.game = game;
     this.server = game.getServer();
     this.world = game.getServer().getWorld("world").get();
+
+    try {
+      blockTypeStringIdToIntId = new Properties();
+      blockTypeStringIdToIntId.load(getClass().getClassLoader().getResourceAsStream("block_types.properties"));
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
   }
 
   public void broadcastMessage(String chatStr) {
@@ -57,5 +70,13 @@ public class GameWrapper {
 
   public BlockState getBlock(Vector3i position) {
     return world.getBlock(position);
+  }
+
+  public <T extends CatalogType> T getTypeById(Class<T> typeClass, int id) {
+    return game.getRegistry().getType(typeClass, String.valueOf(id)).get();
+  }
+
+  public int getBlockTypeIntegerId(BlockType blockType) {
+    return Integer.parseInt(blockTypeStringIdToIntId.getProperty(blockType.getId()));
   }
 }

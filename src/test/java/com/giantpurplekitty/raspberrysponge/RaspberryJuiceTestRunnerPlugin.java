@@ -45,8 +45,7 @@ public class RaspberryJuiceTestRunnerPlugin {
     event.getGame().getCommandDispatcher().register(this, new TestCommand(), "test");
     event.getGame().getCommandDispatcher().register(this, new TCommand(), "t");
 
-    InWorldTestSupport.game = event.getGame();
-    InWorldTestSupport.logger = logger;
+    InWorldTestSupport.init(event.getGame(), logger);
   }
 
   public class TestCommand implements CommandCallable {
