@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge.api;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
@@ -481,58 +482,60 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
   }
 
-  //@Test
-  //public void test_player_setTile() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    Vector3i p = nextTestPosition("player.setTile");
-  //
-  //    // make the origin == p
-  //
-  //    setUpAtPlayerOrigin(p);
-  //
-  //    getGameWrapper().getFirstPlayer().setPitch(-74f);
-  //    getGameWrapper().getFirstPlayer().setRotation(89f);
-  //
-  //    // initial position
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + PLAYER_PLACEMENT_X_OFFSET,
-  //            p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
-  //            p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //
-  //    // move the player diagonally
-  //
-  //    getApiInvocationHandler().handleLine(
-  //        String.format("player.setTile(%s,5,5,5)", getGameWrapper().getFirstPlayer().getName()));
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + 5,
-  //            p.getY() + 5,
-  //            p.getZ() + 5),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //
-  //    // make sure the pitch and yaw are maintained
-  //
-  //    assertEquals(-74, (int) getGameWrapper().getFirstPlayer().getPitch());
-  //    assertEquals(89, (int) getGameWrapper().getFirstPlayer().getRotation());
-  //
-  //    // when player name is blank, default to first player
-  //
-  //    getApiInvocationHandler().handleLine("player.setTile(7,7,7)");
-  //
-  //    assertEquals(
-  //        new Vector3i(
-  //            p.getX() + 7,
-  //            p.getY() + 7,
-  //            p.getZ() + 7),
-  //        getGameWrapper().getFirstPlayer().getPosition());
-  //  }
-  //}
-  //
+  @Test
+  public void test_player_setTile() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+
+      Vector3i p = nextTestPosition("player.setTile");
+
+      // make the origin == p
+
+      setUpAtPlayerOrigin(p);
+
+      float yaw = 89f;
+      float pitch = -74f;
+      float roll = 0;
+      Vector3d rotation = new Vector3d(yaw, pitch, roll);
+      getGameWrapper().getFirstPlayer().setRotation(rotation);
+
+      // initial position
+
+      assertEquals(
+          new Vector3i(
+              p.getX() + PLAYER_PLACEMENT_X_OFFSET,
+              p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+              p.getZ() + PLAYER_PLACEMENT_Z_OFFSET),
+          getGameWrapper().getFirstPlayer().getLocation().getBlockPosition());
+
+      // move the player diagonally
+
+      getApiInvocationHandler().handleLine(
+          String.format("player.setTile(%s,5,5,5)", getGameWrapper().getFirstPlayer().getName()));
+
+      assertEquals(
+          new Vector3i(
+              p.getX() + 5,
+              p.getY() + 5,
+              p.getZ() + 5),
+          getGameWrapper().getFirstPlayer().getLocation().getBlockPosition());
+
+      // make sure the pitch and yaw are maintained
+
+      assertEquals(rotation, getGameWrapper().getFirstPlayer().getRotation());
+
+      // when player name is blank, default to first player
+
+      getApiInvocationHandler().handleLine("player.setTile(7,7,7)");
+
+      assertEquals(
+          new Vector3i(
+              p.getX() + 7,
+              p.getY() + 7,
+              p.getZ() + 7),
+          getGameWrapper().getFirstPlayer().getLocation().getBlockPosition());
+    }
+  }
+
   //@Test
   //public void test_player_getPos() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {

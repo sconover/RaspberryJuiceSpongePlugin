@@ -1,5 +1,6 @@
 package com.giantpurplekitty.raspberrysponge.api;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
@@ -130,19 +131,17 @@ public class OriginalApi {
     return getEntityBlockPositionRelativeToOrigin(gameWrapper.getPlayerByName(playerName));
   }
 
-  //@RPC("player.setTile")
-  //public void player_setTile(int relativeX, int relativeY, int relativeZ) {
-  //  player_setTile(serverWrapper.getFirstPlayer().getName(), relativeX, relativeY, relativeZ);
-  //}
-  //
-  ////TODO: convert all (int)p.getX to p.getBlockX, etc
-  //
-  //@RPC("player.setTile")
-  //public void player_setTile(String playerName, int relativeX, int relativeY, int relativeZ) {
-  //  teleportEntityRelativeToOriginTo(serverWrapper.getPlayerByName(playerName), relativeX,
-  //      relativeY, relativeZ);
-  //}
-  //
+  @RPC("player.setTile")
+  public void player_setTile(int relativeX, int relativeY, int relativeZ) {
+    player_setTile(gameWrapper.getFirstPlayer().getName(), relativeX, relativeY, relativeZ);
+  }
+
+  @RPC("player.setTile")
+  public void player_setTile(String playerName, int relativeX, int relativeY, int relativeZ) {
+    teleportEntityRelativeToOriginTo(gameWrapper.getPlayerByName(playerName),
+        relativeX, relativeY, relativeZ);
+  }
+
   //@RPC("player.getPos")
   //public Vector3i player_getPos() {
   //  //TODO: what do we do here if there's no player logged in?
@@ -240,6 +239,11 @@ public class OriginalApi {
   private Vector3i getOrigin() {
     return gameWrapper.getSpawnPosition();
   }
+
+  private Vector3d getOriginAsDouble() {
+    Vector3i p = gameWrapper.getSpawnPosition();
+    return new Vector3d(p.getX(), p.getY(), p.getZ());
+  }
   //
   //private Vector3D getEntityDirection(Entity entity) {
   //  return calculateDirection(entity.getPitch(), entity.getRotation());
@@ -252,20 +256,11 @@ public class OriginalApi {
   private Vector3i getEntityBlockPositionRelativeToOrigin(Entity entity) {
     return blockPositionRelativeTo(entity.getLocation().getBlockPosition(), getOrigin());
   }
-  //
-  //private void teleportEntityRelativeToOriginTo(Entity entity, double x, double y, double z) {
-  //  Vector3i newPosition =
-  //      new Vector3i(
-  //          getOrigin().getX() + x,
-  //          getOrigin().getY() + y,
-  //          getOrigin().getZ() + z);
-  //
-  //  // maintain existing entity pitch/yaw
-  //  Location newLocation = new Location(serverWrapper.getWorld(), newPosition);
-  //  newLocation.setPitch(entity.getPitch());
-  //  newLocation.setRotation(entity.getRotation());
-  //  entity.teleportTo(newLocation);
-  //}
+
+  private void teleportEntityRelativeToOriginTo(Entity entity, double x, double y, double z) {
+    entity.setLocation(entity.getLocation().setPosition(getOriginAsDouble().add(x, y, z)));
+  }
+
   //
   //public static class BlockEvent {
   //  public static BlockEvent fromBlockRightClock(
