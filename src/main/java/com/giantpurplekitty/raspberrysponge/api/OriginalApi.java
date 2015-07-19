@@ -6,11 +6,13 @@ import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
 
@@ -78,12 +80,12 @@ public class OriginalApi {
         .changeBlocksToTypeWithData(getBlockTypeForIntegerId(blockTypeId), blockData);
   }
   
-  //@RPC("world.getPlayerEntityIds")
-  //public Player[] world_getPlayerEntityIds() {
-  //  List<Player> allPlayers = serverWrapper.getPlayers();
-  //  return allPlayers.toArray(new Player[allPlayers.size()]);
-  //}
-  //
+  @RPC("world.getPlayerEntityIds")
+  public Player[] world_getPlayerEntityIds() {
+    List<Player> allPlayers = gameWrapper.getPlayers();
+    return allPlayers.toArray(new Player[allPlayers.size()]);
+  }
+
   //@RPC("world.getHeight")
   //public int world_getHeight(int x, int z) {
   //  int relativeX = getOrigin().getBlockX() + x;

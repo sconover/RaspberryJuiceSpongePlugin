@@ -1,6 +1,10 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
@@ -61,5 +65,15 @@ public class GameWrapper {
 
   public BlockState getBlock(Vector3i position) {
     return world.getBlock(position);
+  }
+
+  public List<Player> getPlayers() {
+    List<Player> playerList = new ArrayList<Player>(game.getServer().getOnlinePlayers());
+    Collections.sort(playerList, new Comparator<Player>() {
+      @Override public int compare(Player p1, Player p2) {
+        return p1.getIdentifier().compareTo(p2.getIdentifier());
+      }
+    });
+    return playerList;
   }
 }

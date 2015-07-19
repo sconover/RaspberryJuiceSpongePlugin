@@ -3,8 +3,11 @@ package com.giantpurplekitty.raspberrysponge.dispatch;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.player.Player;
 
 public class ApiIO {
   public static Object[] convertArguments(String[] args, Method m) {
@@ -58,15 +61,16 @@ public class ApiIO {
     //  return String.valueOf(objectResult);
     //} else if (objectResult instanceof String) {
     //  return (String) objectResult;
-    //} else if (objectResult instanceof Player) {
-    //  return String.valueOf(((Player) objectResult).getID());
-    //} else if (objectResult instanceof Player[]) {
-    //  Player[] players = (Player[]) objectResult;
-    //  List<String> strings = new ArrayList<String>();
-    //  for (Player p : players) {
-    //    strings.add(serializeResult(p));
-    //  }
-    //  return Joiner.on("|").join(strings);
+    else if (objectResult instanceof Player) {
+      return String.valueOf(((Player) objectResult).getIdentifier());
+    } else if (objectResult instanceof Player[]) {
+      Player[] players = (Player[]) objectResult;
+      List<String> strings = new ArrayList<String>();
+      for (Player p : players) {
+        strings.add(serializeResult(p));
+      }
+      return Joiner.on("|").join(strings);
+    }
     //} else if (objectResult instanceof OriginalApi.BlockEvent) {
     //  return ((OriginalApi.BlockEvent) objectResult).toApiResult();
     //} else if (objectResult instanceof OriginalApi.BlockEvent[]) {
@@ -84,8 +88,8 @@ public class ApiIO {
     //  return positionToApiString((Position) objectResult);
     //} else if (objectResult instanceof Float) {
     //  return String.format("%f", (Float) objectResult);
-     else if (objectResult instanceof Integer) {
-      return String.valueOf((Integer)objectResult);
+    else if (objectResult instanceof Integer) {
+      return String.valueOf((Integer) objectResult);
     }
     throw new RuntimeException(String.format(
         "not sure how to serialize %s %s",

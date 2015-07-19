@@ -5,8 +5,11 @@ import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -16,6 +19,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
@@ -309,23 +313,25 @@ public class OriginalApiTest extends InWorldTestSupport {
     assertEquals(8, blockTypeAndDataToBlocks.get(limeWoolTypeAndData).size());
   }
 
-  //@Test
-  //public void test_world_getPlayerEntityIds() throws Exception {
-  //  if (getGameWrapper().hasPlayers()) {
-  //
-  //    String expectedPlayerIdsStr = getGameWrapper().getPlayers().stream()
-  //        .map(Player::getID)
-  //        .map(String::valueOf)
-  //        .collect(Collectors.joining("|"));
-  //
-  //    getApiInvocationHandler().handleLine("world.getPlayerEntityIds()");
-  //
-  //    assertEquals(
-  //        Lists.newArrayList(expectedPlayerIdsStr),
-  //        getTestOut().sends);
-  //  }
-  //}
-  //
+  @Test
+  public void test_world_getPlayerEntityIds() throws Exception {
+    if (getGameWrapper().hasPlayers()) {
+      List<String> playerIds = new ArrayList<String>();
+      for(Player p: getGameWrapper().getPlayers()) {
+        playerIds.add(p.getIdentifier());
+      }
+      Collections.sort(playerIds);
+      String expectedPlayerIdsStr =
+          Joiner.on("|").join(playerIds);
+
+      getApiInvocationHandler().handleLine("world.getPlayerEntityIds()");
+
+      assertEquals(
+          Lists.newArrayList(expectedPlayerIdsStr),
+          getTestOut().sends);
+    }
+  }
+
   //@Test
   //public void test_world_getHeight() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {
