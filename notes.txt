@@ -43,6 +43,10 @@ gpk site
     teaching materials
   students
 
+**everything** related to passing a data "short" needs to be deprecated, esp once
+ the sponge 2.0 data manipulation stuff comes out.
+ Needs to be replaced with either a general enum-like set/get api,
+ or api methods per type of data to be set. Something like that.
 
 =====================
 

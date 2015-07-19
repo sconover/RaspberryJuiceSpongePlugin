@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
+import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,7 +13,6 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
-import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 
 public class OriginalApi {
   private final GameWrapper gameWrapper;
@@ -37,58 +37,47 @@ public class OriginalApi {
   }
 
   @RPC("world.getBlockWithData")
-  public Pair<BlockType, Integer> world_setBlockWithData(int x, int y, int z) {
+  public Pair<BlockType, Integer> world_getBlockWithData(int x, int y, int z) {
     BlockState blockState = gameWrapper.getBlock(x, y, z);
-    int data = 0;
-
-    //TODO: hard-coded to only work with color right now. Make this work for other kinds of "data"
-    if (gameWrapper.hasColor(blockState)) {
-      data = getIntegerIdForColor(gameWrapper.getDyeColor(blockState));
-    }
-
-    return ImmutablePair.of(blockState.getType(), data);
+    return ImmutablePair.of(blockState.getType(), DataHelper.getData(blockState));
   }
 
   @RPC("world.setBlock")
   public void world_setBlock(int x, int y, int z, short blockTypeId) {
-    CuboidReference.relativeTo(getOrigin(),
-        new Vector3i(x, y, z),
-        new Vector3i(x, y, z))
-        .fetchBlocks(gameWrapper)
-        .changeBlocksToType(getBlockTypeForIntegerId(blockTypeId));
+    world_setBlock(x, y, z, blockTypeId, (short)0);
   }
 
-  //@RPC("world.setBlock")
-  //public void world_setBlock(int x, int y, int z, short blockTypeId, short blockData) {
-  //  world_setBlocks(
-  //      x, y, z,
-  //      x, y, z,
-  //      blockTypeId, blockData);
-  //}
-  //
-  //@RPC("world.setBlocks")
-  //public void world_setBlocks(
-  //    int x1, int y1, int z1,
-  //    int x2, int y2, int z2,
-  //    short blockTypeId) {
-  //  world_setBlocks(
-  //      x1, y1, z1,
-  //      x2, y2, z2,
-  //      blockTypeId, (short) 0);
-  //}
-  //
-  //@RPC("world.setBlocks")
-  //public void world_setBlocks(
-  //    int x1, int y1, int z1,
-  //    int x2, int y2, int z2,
-  //    short blockTypeId, short blockData) {
-  //  CuboidReference.relativeTo(getOrigin(),
-  //      new Position(x1, y1, z1),
-  //      new Position(x2, y2, z2))
-  //      .fetchBlocks(serverWrapper.getWorld())
-  //      .changeBlocksToType(BlockType.fromIdAndData(blockTypeId, blockData));
-  //}
-  //
+  @RPC("world.setBlock")
+  public void world_setBlock(int x, int y, int z, short blockTypeId, short blockData) {
+    world_setBlocks(
+        x, y, z,
+        x, y, z,
+        blockTypeId, blockData);
+  }
+  
+  @RPC("world.setBlocks")
+  public void world_setBlocks(
+      int x1, int y1, int z1,
+      int x2, int y2, int z2,
+      short blockTypeId) {
+    world_setBlocks(
+        x1, y1, z1,
+        x2, y2, z2,
+        blockTypeId, (short) 0);
+  }
+  
+  @RPC("world.setBlocks")
+  public void world_setBlocks(
+      int x1, int y1, int z1,
+      int x2, int y2, int z2,
+      short blockTypeId, short blockData) {
+    CuboidReference.relativeTo(getOrigin(),
+        new Vector3i(x1, y1, z1),
+        new Vector3i(x2, y2, z2))
+        .fetchBlocks(gameWrapper)
+        .changeBlocksToTypeWithData(getBlockTypeForIntegerId(blockTypeId), blockData);
+  }
+  
   //@RPC("world.getPlayerEntityIds")
   //public Player[] world_getPlayerEntityIds() {
   //  List<Player> allPlayers = serverWrapper.getPlayers();
@@ -151,13 +140,13 @@ public class OriginalApi {
   //}
   //
   //@RPC("player.getPos")
-  //public Position player_getPos() {
+  //public Vector3i player_getPos() {
   //  //TODO: what do we do here if there's no player logged in?
   //  return player_getPos(serverWrapper.getFirstPlayer().getName());
   //}
   //
   //@RPC("player.getPos")
-  //public Position player_getPos(String playerName) {
+  //public Vector3i player_getPos(String playerName) {
   //  return getEntityPositionRelateiveToOrigin(serverWrapper.getPlayerByName(playerName));
   //}
   //
@@ -219,7 +208,7 @@ public class OriginalApi {
   //}
   //
   //@RPC("entity.getPos")
-  //public Position entity_getPos(int entityId) {
+  //public Vector3i entity_getPos(int entityId) {
   //  return getEntityPositionRelateiveToOrigin(serverWrapper.getEntityById(entityId));
   //}
   //
@@ -252,7 +241,7 @@ public class OriginalApi {
   //  return calculateDirection(entity.getPitch(), entity.getRotation());
   //}
   //
-  //private Position getEntityPositionRelateiveToOrigin(Entity entity) {
+  //private Vector3i getEntityPositionRelateiveToOrigin(Entity entity) {
   //  return positionRelativeTo(entity.getLocation(), getOrigin());
   //}
   //
@@ -261,8 +250,8 @@ public class OriginalApi {
   //}
   //
   //private void teleportEntityRelativeToOriginTo(Entity entity, double x, double y, double z) {
-  //  Position newPosition =
-  //      new Position(
+  //  Vector3i newPosition =
+  //      new Vector3i(
   //          getOrigin().getX() + x,
   //          getOrigin().getY() + y,
   //          getOrigin().getZ() + z);
@@ -277,7 +266,7 @@ public class OriginalApi {
   //public static class BlockEvent {
   //  public static BlockEvent fromBlockRightClock(
   //      BlockRightClickHook blockRightClick,
-  //      Position relativeToPosition) {
+  //      Vector3i relativeToPosition) {
   //
   //    Block block = blockRightClick.getBlockClicked();
   //    return new BlockEvent(
@@ -286,11 +275,11 @@ public class OriginalApi {
   //        blockRightClick.getPlayer());
   //  }
   //
-  //  private final Position pos;
+  //  private final Vector3i pos;
   //  private final BlockFace face;
   //  private final Entity entity;
   //
-  //  public BlockEvent(Position pos, BlockFace face, Entity entity) {
+  //  public BlockEvent(Vector3i pos, BlockFace face, Entity entity) {
   //    this.pos = pos;
   //    this.face = face;
   //    this.entity = entity;
@@ -308,7 +297,7 @@ public class OriginalApi {
   //}
   //
   //public static class BlockPosition {
-  //  public static BlockPosition fromPosition(Position p) {
+  //  public static BlockPosition fromPosition(Vector3i p) {
   //    return new BlockPosition(p.getBlockX(), p.getBlockY(), p.getBlockZ());
   //  }
   //

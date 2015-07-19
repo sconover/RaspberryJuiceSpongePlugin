@@ -1,9 +1,6 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
-import java.awt.Color;
-import net.minecraft.block.BlockColored;
-import net.minecraft.item.EnumDyeColor;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
@@ -12,7 +9,6 @@ import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
 import static com.google.common.base.Preconditions.checkState;
 
 public class GameWrapper {
@@ -65,38 +61,5 @@ public class GameWrapper {
 
   public BlockState getBlock(Vector3i position) {
     return world.getBlock(position);
-  }
-
-  // this is a temporary means of setting properties, while sponge devs are working on data 2.0
-  // once that's done, we can remove the plugin dependency on SpongeCommon, and depend only on
-  // SpongeApi
-
-  public boolean hasColor(BlockState blockState) {
-    net.minecraft.block.state.BlockState.StateImplementation nmBlockState =
-        (net.minecraft.block.state.BlockState.StateImplementation) blockState;
-    return nmBlockState.getProperties().containsKey(BlockColored.COLOR);
-  }
-
-  public BlockState setDyeColor(BlockState blockState, Color color) {
-    int integerIdForColor = TypeMappings.getIntegerIdForColor(color);
-    net.minecraft.block.state.BlockState.StateImplementation nmBlockState =
-        (net.minecraft.block.state.BlockState.StateImplementation) blockState;
-    return (BlockState)nmBlockState.withProperty(BlockColored.COLOR, getEnumDyeColorByOrdinal(integerIdForColor));
-  }
-
-  public Color getDyeColor(BlockState blockState) {
-    net.minecraft.block.state.BlockState.StateImplementation nmBlockState =
-        (net.minecraft.block.state.BlockState.StateImplementation) blockState;
-    EnumDyeColor enumDyeColor = (EnumDyeColor)nmBlockState.getProperties().get(BlockColored.COLOR);
-    return getColorForIntegerId(enumDyeColor.ordinal());
-  }
-
-  private EnumDyeColor getEnumDyeColorByOrdinal(int integerIdForColor) {
-    for (EnumDyeColor dyeColor: EnumDyeColor.values()) {
-      if (dyeColor.ordinal() == integerIdForColor) {
-        return dyeColor;
-      }
-    }
-    return null;
   }
 }

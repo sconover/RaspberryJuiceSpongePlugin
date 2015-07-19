@@ -12,6 +12,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.world.Location;
@@ -36,23 +39,32 @@ public class Cuboid implements Iterable<Relative<Location>> {
     return blockTypes;
   }
 
-  public BlockType[] blockTypeForEachBlock() {
-    List<BlockType> blockTypes = new ArrayList<BlockType>();
+  public Map<Pair<BlockType, Integer>, List<BlockState>> blockTypeAndDataToBlocks() {
+    Map<Pair<BlockType, Integer>, List<BlockState>> m =
+        new LinkedHashMap<Pair<BlockType, Integer>, List<BlockState>>();
     for (Relative<Location> blockLocation : this) {
-      blockTypes.add(blockLocation.object.getBlockType());
+      Pair<BlockType, Integer> key =
+          ImmutablePair.of(
+              blockLocation.object.getBlockType(),
+              DataHelper.getData(blockLocation.object.getBlock()));
+      if (!m.containsKey(key)) {
+        m.put(key, new ArrayList<BlockState>());
+      }
+      m.get(key).add(blockLocation.object.getBlock());
     }
-    return blockTypes.toArray(new BlockType[blockTypes.size()]);
+    return ImmutableMap.copyOf(m);
   }
 
-  public Map<BlockType, List<Location>> blockTypeToBlocks() {
-    Map<BlockType, List<Location>> blockTypeToBlockList = new LinkedHashMap<BlockType, List<Location>>();
+  public Map<BlockType, List<BlockState>> blockTypeToBlocks() {
+    Map<BlockType, List<BlockState>> m = new LinkedHashMap<BlockType, List<BlockState>>();
     for (Relative<Location> blockLocation : this) {
-      if (!blockTypeToBlockList.containsKey(blockLocation.object.getBlockType())) {
-        blockTypeToBlockList.put(blockLocation.object.getBlockType(), new ArrayList<Location>());
+      BlockType key = blockLocation.object.getBlockType();
+      if (!m.containsKey(key)) {
+        m.put(key, new ArrayList<BlockState>());
       }
-      blockTypeToBlockList.get(blockLocation.object.getBlockType()).add(blockLocation.object);
+      m.get(key).add(blockLocation.object.getBlock());
     }
-    return ImmutableMap.copyOf(blockTypeToBlockList);
+    return ImmutableMap.copyOf(m);
   }
 
   public boolean isUniformType(BlockType blockType) {
@@ -68,8 +80,14 @@ public class Cuboid implements Iterable<Relative<Location>> {
   }
 
   public Cuboid changeBlocksToType(BlockType newType) {
+    return changeBlocksToTypeWithData(newType, 0);
+  }
+
+  //TODO everything related to "data" needs to be deprecated for sure. This is nuts.
+  public Cuboid changeBlocksToTypeWithData(BlockType newType, int data) {
     for (Relative<Location> relativeBlock : this) {
       relativeBlock.object.setBlockType(newType);
+      relativeBlock.object.setBlock(DataHelper.setData(relativeBlock.object.getBlock(), data));
     }
     return this;
   }

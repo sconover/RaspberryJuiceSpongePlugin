@@ -3,13 +3,22 @@ package com.giantpurplekitty.raspberrysponge.api;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
+import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
+import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.world.Location;
 
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForBlockType;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 import static junit.framework.TestCase.assertTrue;
@@ -54,7 +63,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_world_getBlock() throws Exception {
     Vector3i p = nextTestPosition("world.getBlock");
 
-    Location block = getGameWrapper().getLocation(p.getX()+3, p.getY()+3, p.getZ()+3);
+    Location block = getGameWrapper().getLocation(p.getX() + 3, p.getY() + 3, p.getZ() + 3);
     block.setBlockType(BlockTypes.REDSTONE_BLOCK);
 
     // sanity check
@@ -72,208 +81,77 @@ public class OriginalApiTest extends InWorldTestSupport {
   }
 
   // TODO: test this stuff
+
   /**
-
-   .id
-   "The id (or type) of block"
-
-   AIR                 = Block(0)
-   STONE               = Block(1)
-   GRASS               = Block(2)
-   DIRT                = Block(3)
-   COBBLESTONE         = Block(4)
-   WOOD_PLANKS         = Block(5)
-   SAPLING             = Block(6)
-   BEDROCK             = Block(7)
-   WATER_FLOWING       = Block(8)
-   WATER               = WATER_FLOWING
-   WATER_STATIONARY    = Block(9)
-   LAVA_FLOWING        = Block(10)
-   LAVA                = LAVA_FLOWING
-   LAVA_STATIONARY     = Block(11)
-   SAND                = Block(12)
-   GRAVEL              = Block(13)
-   GOLD_ORE            = Block(14)
-   IRON_ORE            = Block(15)
-   COAL_ORE            = Block(16)
-   WOOD                = Block(17)
-   LEAVES              = Block(18)
-   GLASS               = Block(20)
-   LAPIS_LAZULI_ORE    = Block(21)
-   LAPIS_LAZULI_BLOCK  = Block(22)
-   SANDSTONE           = Block(24)
-   BED                 = Block(26)
-   COBWEB              = Block(30)
-   GRASS_TALL          = Block(31)
-   WOOL                = Block(35)
-   FLOWER_YELLOW       = Block(37)
-   FLOWER_CYAN         = Block(38)
-   MUSHROOM_BROWN      = Block(39)
-   MUSHROOM_RED        = Block(40)
-   GOLD_BLOCK          = Block(41)
-   IRON_BLOCK          = Block(42)
-   STONE_SLAB_DOUBLE   = Block(43)
-   STONE_SLAB          = Block(44)
-   BRICK_BLOCK         = Block(45)
-   TNT                 = Block(46)
-   BOOKSHELF           = Block(47)
-   MOSS_STONE          = Block(48)
-   OBSIDIAN            = Block(49)
-   TORCH               = Block(50)
-   FIRE                = Block(51)
-   STAIRS_WOOD         = Block(53)
-   CHEST               = Block(54)
-   DIAMOND_ORE         = Block(56)
-   DIAMOND_BLOCK       = Block(57)
-   CRAFTING_TABLE      = Block(58)
-   FARMLAND            = Block(60)
-   FURNACE_INACTIVE    = Block(61)
-   FURNACE_ACTIVE      = Block(62)
-   DOOR_WOOD           = Block(64)
-   LADDER              = Block(65)
-   STAIRS_COBBLESTONE  = Block(67)
-   DOOR_IRON           = Block(71)
-   REDSTONE_ORE        = Block(73)
-   SNOW                = Block(78)
-   ICE                 = Block(79)
-   SNOW_BLOCK          = Block(80)
-   CACTUS              = Block(81)
-   CLAY                = Block(82)
-   SUGAR_CANE          = Block(83)
-   FENCE               = Block(85)
-   GLOWSTONE_BLOCK     = Block(89)
-   BEDROCK_INVISIBLE   = Block(95)
-   STONE_BRICK         = Block(98)
-   GLASS_PANE          = Block(102)
-   MELON               = Block(103)
-   FENCE_GATE          = Block(107)
-   GLOWING_OBSIDIAN    = Block(246)
-   NETHER_REACTOR_CORE = Block(247)
-
-   .data
-   "The data (or sub-type) of a block"
-
-   Data Values of blocks:
-   WOOL:
-   0: White
-   1: Orange
-   2: Magenta
-   3: Light Blue
-   4: Yellow
-   5: Lime
-   6: Pink
-   7: Grey
-   8: Light grey
-   9: Cyan
-   10: Purple
-   11: Blue
-   12: Brown
-   13: Green
-   14: Red
-   15:Black
-
-   WOOD:
-   0: Oak (up/down)
-   1: Spruce (up/down)
-   2: Birch (up/down)
-   (below not on Pi)
-   3: Jungle (up/down)
-   4: Oak (east/west)
-   5: Spruce (east/west)
-   6: Birch (east/west)
-   7: Jungle (east/west)
-   8: Oak (north/south)
-   9: Spruce (north/south)
-   10: Birch (north/south)
-   11: Jungle (north/south)
-   12: Oak (only bark)
-   13: Spruce (only bark)
-   14: Birch (only bark)
-   15: Jungle (only bark)
-
-   WOOD_PLANKS (Not on Pi):
-   0: Oak
-   1: Spruce
-   2: Birch
-   3: Jungle
-
-   SAPLING:
-   0: Oak
-   1: Spruce
-   2: Birch
-   3: Jungle (Not on Pi)
-
-   GRASS_TALL:
-   0: Shrub
-   1: Grass
-   2: Fern
-   3: Grass (color affected by biome) (Not on Pi)
-
-   TORCH:
-   1: Pointing east
-   2: Pointing west
-   3: Pointing south
-   4: Pointing north
-   5: Facing up
-
-   STONE_BRICK:
-   0: Stone brick
-   1: Mossy stone brick
-   2: Cracked stone brick
-   3: Chiseled stone brick
-
-   STONE_SLAB / STONE_SLAB_DOUBLE:
-   0: Stone
-   1: Sandstone
-   2: Wooden
-   3: Cobblestone
-   4: Brick
-   5: Stone Brick
-   Below - not on Pi
-   6: Nether Brick
-   7: Quartz
-
-   Not on Pi
-   SNOW_BLOCK:
-   0-7: Height of snow, 0 being the lowest, 7 being the highest.
-
-   TNT:
-   0: Inactive
-   1: Ready to explode
-
-   LEAVES:
-   1: Oak leaves
-   2: Spruce leaves
-   3: Birch leaves
-
-   SANDSTONE:
-   0: Sandstone
-   1: Chiseled sandstone
-   2: Smooth sandstone
-
-   STAIRS_[COBBLESTONE, WOOD]:
-   0: Ascending east
-   1: Ascending west
-   2: Ascending south
-   3: Ascending north
-   4: Ascending east (upside down)
-   5: Ascending west (upside down)
-   6: Ascending south (upside down)
-   7: Ascending north (upside down)
-
-   LADDERS, CHESTS, FURNACES:
-   2: Facing north
-   3: Facing south
-   4: Facing west
-   5: Facing east
-
-   [WATER, LAVA]_STATIONARY:
-   0-7: Level of the water, 0 being the highest, 7 the lowest
-
-   NETHER_REACTOR_CORE:
-   0: Unused
-   1: Active
-   2: Stopped / used up
+   * .id "The id (or type) of block"
+   *
+   * AIR                 = Block(0) STONE               = Block(1) GRASS               = Block(2)
+   * DIRT                = Block(3) COBBLESTONE         = Block(4) WOOD_PLANKS         = Block(5)
+   * SAPLING             = Block(6) BEDROCK             = Block(7) WATER_FLOWING       = Block(8)
+   * WATER               = WATER_FLOWING WATER_STATIONARY    = Block(9) LAVA_FLOWING        =
+   * Block(10) LAVA                = LAVA_FLOWING LAVA_STATIONARY     = Block(11) SAND
+   *  = Block(12) GRAVEL              = Block(13) GOLD_ORE            = Block(14) IRON_ORE
+   *  = Block(15) COAL_ORE            = Block(16) WOOD                = Block(17) LEAVES
+   *  = Block(18) GLASS               = Block(20) LAPIS_LAZULI_ORE    = Block(21) LAPIS_LAZULI_BLOCK
+   *  = Block(22) SANDSTONE           = Block(24) BED                 = Block(26) COBWEB
+   *  = Block(30) GRASS_TALL          = Block(31) WOOL                = Block(35) FLOWER_YELLOW
+   *  = Block(37) FLOWER_CYAN         = Block(38) MUSHROOM_BROWN      = Block(39) MUSHROOM_RED
+   *  = Block(40) GOLD_BLOCK          = Block(41) IRON_BLOCK          = Block(42) STONE_SLAB_DOUBLE
+   *  = Block(43) STONE_SLAB          = Block(44) BRICK_BLOCK         = Block(45) TNT
+   *  = Block(46) BOOKSHELF           = Block(47) MOSS_STONE          = Block(48) OBSIDIAN
+   *  = Block(49) TORCH               = Block(50) FIRE                = Block(51) STAIRS_WOOD
+   *  = Block(53) CHEST               = Block(54) DIAMOND_ORE         = Block(56) DIAMOND_BLOCK
+   *  = Block(57) CRAFTING_TABLE      = Block(58) FARMLAND            = Block(60) FURNACE_INACTIVE
+   *  = Block(61) FURNACE_ACTIVE      = Block(62) DOOR_WOOD           = Block(64) LADDER
+   *  = Block(65) STAIRS_COBBLESTONE  = Block(67) DOOR_IRON           = Block(71) REDSTONE_ORE
+   *  = Block(73) SNOW                = Block(78) ICE                 = Block(79) SNOW_BLOCK
+   *  = Block(80) CACTUS              = Block(81) CLAY                = Block(82) SUGAR_CANE
+   *  = Block(83) FENCE               = Block(85) GLOWSTONE_BLOCK     = Block(89) BEDROCK_INVISIBLE
+   *  = Block(95) STONE_BRICK         = Block(98) GLASS_PANE          = Block(102) MELON
+   *   = Block(103) FENCE_GATE          = Block(107) GLOWING_OBSIDIAN    = Block(246)
+   * NETHER_REACTOR_CORE = Block(247)
+   *
+   * .data "The data (or sub-type) of a block"
+   *
+   * Data Values of blocks: WOOL: 0: White 1: Orange 2: Magenta 3: Light Blue 4: Yellow 5: Lime 6:
+   * Pink 7: Grey 8: Light grey 9: Cyan 10: Purple 11: Blue 12: Brown 13: Green 14: Red 15:Black
+   *
+   * WOOD: 0: Oak (up/down) 1: Spruce (up/down) 2: Birch (up/down) (below not on Pi) 3: Jungle
+   * (up/down) 4: Oak (east/west) 5: Spruce (east/west) 6: Birch (east/west) 7: Jungle (east/west)
+   * 8: Oak (north/south) 9: Spruce (north/south) 10: Birch (north/south) 11: Jungle (north/south)
+   * 12: Oak (only bark) 13: Spruce (only bark) 14: Birch (only bark) 15: Jungle (only bark)
+   *
+   * WOOD_PLANKS (Not on Pi): 0: Oak 1: Spruce 2: Birch 3: Jungle
+   *
+   * SAPLING: 0: Oak 1: Spruce 2: Birch 3: Jungle (Not on Pi)
+   *
+   * GRASS_TALL: 0: Shrub 1: Grass 2: Fern 3: Grass (color affected by biome) (Not on Pi)
+   *
+   * TORCH: 1: Pointing east 2: Pointing west 3: Pointing south 4: Pointing north 5: Facing up
+   *
+   * STONE_BRICK: 0: Stone brick 1: Mossy stone brick 2: Cracked stone brick 3: Chiseled stone
+   * brick
+   *
+   * STONE_SLAB / STONE_SLAB_DOUBLE: 0: Stone 1: Sandstone 2: Wooden 3: Cobblestone 4: Brick 5:
+   * Stone Brick Below - not on Pi 6: Nether Brick 7: Quartz
+   *
+   * Not on Pi SNOW_BLOCK: 0-7: Height of snow, 0 being the lowest, 7 being the highest.
+   *
+   * TNT: 0: Inactive 1: Ready to explode
+   *
+   * LEAVES: 1: Oak leaves 2: Spruce leaves 3: Birch leaves
+   *
+   * SANDSTONE: 0: Sandstone 1: Chiseled sandstone 2: Smooth sandstone
+   *
+   * STAIRS_[COBBLESTONE, WOOD]: 0: Ascending east 1: Ascending west 2: Ascending south 3: Ascending
+   * north 4: Ascending east (upside down) 5: Ascending west (upside down) 6: Ascending south
+   * (upside down) 7: Ascending north (upside down)
+   *
+   * LADDERS, CHESTS, FURNACES: 2: Facing north 3: Facing south 4: Facing west 5: Facing east
+   *
+   * [WATER, LAVA]_STATIONARY: 0-7: Level of the water, 0 being the highest, 7 the lowest
+   *
+   * NETHER_REACTOR_CORE: 0: Unused 1: Active 2: Stopped / used up
    */
 
   // TODO - test returning other types of data
@@ -291,7 +169,9 @@ public class OriginalApiTest extends InWorldTestSupport {
 
     Location block2 = block.add(1, 0, 0);
     BlockState limeWoolBlock =
-        getGameWrapper().setDyeColor(BlockTypes.WOOL.getDefaultState(), DyeColors.LIME.getColor());
+        DataHelper.setData(
+            BlockTypes.WOOL.getDefaultState(),
+            getIntegerIdForColor(DyeColors.LIME.getColor()));
     block2.setBlock(limeWoolBlock);
 
     getApiInvocationHandler().handleLine(
@@ -300,7 +180,7 @@ public class OriginalApiTest extends InWorldTestSupport {
     assertEquals(
         String.format("%d,%d", getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK), 0),
         getTestOut().sends.get(0));
-  
+
     getApiInvocationHandler().handleLine(
         String.format("world.getBlockWithData(%d,%d,%d)", p.getX() + 1, p.getY(), p.getZ()));
 
@@ -310,120 +190,125 @@ public class OriginalApiTest extends InWorldTestSupport {
             getIntegerIdForColor(DyeColors.LIME.getColor())),
         getTestOut().sends.get(1));
   }
-  
+
   @Test
   public void test_world_setBlock() throws Exception {
     Vector3i p = nextTestPosition("world.setBlock");
-  
+
     getApiInvocationHandler().handleLine(
         String.format("world.setBlock(%d,%d,%d,%s)",
             p.getX(),
             p.getY(),
             p.getZ(),
-            BlockTypes.REDSTONE_BLOCK.getId()));
-  
+            getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK)));
+
     Location block = getGameWrapper().getLocation(p);
     assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
 
-    //TODO: disabled until I get the type/data stuff figured out, as noted above
-    //getApiInvocationHandler().handleLine(
-    //    String.format("world.setBlock(%d,%d,%d,%d,%d)",
-    //        p.getX() + 1,
-    //        p.getY(),
-    //        p.getZ(),
-    //        BlockTypes.LimeWool.getId(),
-    //        BlockTypes.LimeWool.getData()));
-    //
-    //Location block2 = getGameWrapper().getLocation(
-    //    p.getX() + 1,
-    //    p.getY(),
-    //    p.getZ());
-    //
-    //assertEquals(BlockTypes.LimeWool, block2.getType());
-    //assertEquals(BlockTypes.LimeWool.getData(), block2.getType().getData());
+    getApiInvocationHandler().handleLine(
+        String.format("world.setBlock(%d,%d,%d,%d,%d)",
+            p.getX() + 1,
+            p.getY(),
+            p.getZ(),
+            getIntegerIdForBlockType(BlockTypes.WOOL),
+            getIntegerIdForColor(DyeColors.LIME.getColor())));
+
+    Location block2 = getGameWrapper().getLocation(
+        p.getX() + 1,
+        p.getY(),
+        p.getZ());
+
+    assertEquals(BlockTypes.WOOL, block2.getBlockType());
+    assertEquals(
+        DyeColors.LIME.getColor(),
+        getColorForIntegerId(DataHelper.getData(block2.getBlock())));
   }
-  
-  //@Test
-  //public void test_world_setBlocks_simple() throws Exception {
-  //  Vector3i cubeCorner = nextTestPosition("world.setBlocks simple");
-  //
-  //  Vector3i otherCubeCorner =
-  //      new Vector3i(
-  //          cubeCorner.getX() + 1,
-  //          cubeCorner.getY() + 1,
-  //          cubeCorner.getZ() + 1);
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d)",
-  //          (int) cubeCorner.getX(),
-  //          (int) cubeCorner.getY(),
-  //          (int) cubeCorner.getZ(),
-  //          (int) otherCubeCorner.getX(),
-  //          (int) otherCubeCorner.getY(),
-  //          (int) otherCubeCorner.getZ(),
-  //          BlockTypes.REDSTONE_BLOCK.getId()));
-  //
-  //  Map<BlockType, List<Block>> blockTypeToBlocks =
-  //      CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
-  //          .fetchBlocks(getGameWrapper().getWorld())
-  //          .blockTypeToBlocks();
-  //
-  //  // there's a 2x2x2 set of redstone blocks
-  //  assertEquals(Sets.newHashSet(BlockTypes.REDSTONE_BLOCK), blockTypeToBlocks.keySet());
-  //  assertEquals(8, blockTypeToBlocks.get(BlockTypes.REDSTONE_BLOCK).size());
-  //
-  //  Vector3i pastOtherCubeCorner =
-  //      new Vector3i(
-  //          cubeCorner.getX() + 2,
-  //          cubeCorner.getY() + 2,
-  //          cubeCorner.getZ() + 2);
-  //
-  //  Map<BlockType, List<Block>> blockTypeToBlocks2 =
-  //      CuboidReference.fromCorners(cubeCorner, pastOtherCubeCorner)
-  //          .fetchBlocks(getGameWrapper().getWorld())
-  //          .blockTypeToBlocks();
-  //
-  //  // out of this 3x3x3 cube, there's a 2x2x2 set of redstone blocks,
-  //  // and the rest is air
-  //  assertEquals(Sets.newHashSet(
-  //          BlockTypes.REDSTONE_BLOCK,
-  //          BlockTypes.Air),
-  //      blockTypeToBlocks2.keySet());
-  //  assertEquals(8, blockTypeToBlocks2.get(BlockTypes.REDSTONE_BLOCK).size());
-  //  assertEquals(27 - 8, blockTypeToBlocks2.get(BlockTypes.Air).size());
-  //}
-  //
-  //@Test
-  //public void test_world_setBlocks_withData_whichIsTheColor() throws Exception {
-  //  Vector3i cubeCorner = nextTestPosition("world.setBlocks with data");
-  //
-  //  Vector3i otherCubeCorner =
-  //      new Vector3i(
-  //          cubeCorner.getX() + 1,
-  //          cubeCorner.getY() + 1,
-  //          cubeCorner.getZ() + 1);
-  //
-  //  getApiInvocationHandler().handleLine(
-  //      String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d,%d)",
-  //          (int) cubeCorner.getX(),
-  //          (int) cubeCorner.getY(),
-  //          (int) cubeCorner.getZ(),
-  //          (int) otherCubeCorner.getX(),
-  //          (int) otherCubeCorner.getY(),
-  //          (int) otherCubeCorner.getZ(),
-  //          BlockTypes.LimeWool.getId(),
-  //          BlockTypes.LimeWool.getData()));
-  //
-  //  Map<BlockType, List<Block>> blockTypeToBlocks =
-  //      CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
-  //          .fetchBlocks(getGameWrapper().getWorld())
-  //          .blockTypeToBlocks();
-  //
-  //  // there's a 2x2x2 set of green wool blocks
-  //  assertEquals(Sets.newHashSet(BlockTypes.LimeWool), blockTypeToBlocks.keySet());
-  //  assertEquals(8, blockTypeToBlocks.get(BlockTypes.LimeWool).size());
-  //}
-  //
+
+  @Test
+  public void test_world_setBlocks_simple() throws Exception {
+    Vector3i cubeCorner = nextTestPosition("world.setBlocks simple");
+
+    Vector3i otherCubeCorner =
+        new Vector3i(
+            cubeCorner.getX() + 1,
+            cubeCorner.getY() + 1,
+            cubeCorner.getZ() + 1);
+
+    getApiInvocationHandler().handleLine(
+        String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d)",
+            cubeCorner.getX(),
+            cubeCorner.getY(),
+            cubeCorner.getZ(),
+            otherCubeCorner.getX(),
+            otherCubeCorner.getY(),
+            otherCubeCorner.getZ(),
+            getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK)));
+
+    Map<BlockType, List<BlockState>> blockTypeToBlocks =
+        CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
+            .fetchBlocks(getGameWrapper())
+            .blockTypeToBlocks();
+
+    // there's a 2x2x2 set of redstone blocks
+    assertEquals(Sets.newHashSet(BlockTypes.REDSTONE_BLOCK), blockTypeToBlocks.keySet());
+    assertEquals(8, blockTypeToBlocks.get(BlockTypes.REDSTONE_BLOCK).size());
+
+    Vector3i pastOtherCubeCorner =
+        new Vector3i(
+            cubeCorner.getX() + 2,
+            cubeCorner.getY() + 2,
+            cubeCorner.getZ() + 2);
+
+    Map<BlockType, List<BlockState>> blockTypeToBlocks2 =
+        CuboidReference.fromCorners(cubeCorner, pastOtherCubeCorner)
+            .fetchBlocks(getGameWrapper())
+            .blockTypeToBlocks();
+
+    // out of this 3x3x3 cube, there's a 2x2x2 set of redstone blocks,
+    // and the rest is air
+    assertEquals(Sets.newHashSet(
+            BlockTypes.REDSTONE_BLOCK,
+            BlockTypes.AIR),
+        blockTypeToBlocks2.keySet());
+    assertEquals(8, blockTypeToBlocks2.get(BlockTypes.REDSTONE_BLOCK).size());
+    assertEquals(27 - 8, blockTypeToBlocks2.get(BlockTypes.AIR).size());
+  }
+
+  //TODO: only color "data" works right now
+  @Test
+  public void test_world_setBlocks_withData_whichIsTheColor() throws Exception {
+    Vector3i cubeCorner = nextTestPosition("world.setBlocks with data");
+
+    Vector3i otherCubeCorner =
+        new Vector3i(
+            cubeCorner.getX() + 1,
+            cubeCorner.getY() + 1,
+            cubeCorner.getZ() + 1);
+
+    getApiInvocationHandler().handleLine(
+        String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d,%d)",
+            cubeCorner.getX(),
+            cubeCorner.getY(),
+            cubeCorner.getZ(),
+            otherCubeCorner.getX(),
+            otherCubeCorner.getY(),
+            otherCubeCorner.getZ(),
+            getIntegerIdForBlockType(BlockTypes.WOOL),
+            getIntegerIdForColor(DyeColors.LIME.getColor())));
+
+    Map<Pair<BlockType, Integer>, List<BlockState>> blockTypeAndDataToBlocks =
+        CuboidReference.fromCorners(cubeCorner, otherCubeCorner)
+            .fetchBlocks(getGameWrapper())
+            .blockTypeAndDataToBlocks();
+
+    // there's a 2x2x2 set of green wool blocks
+    ImmutablePair<BlockType, Integer> limeWoolTypeAndData = ImmutablePair.of(
+        BlockTypes.WOOL,
+        getIntegerIdForColor(DyeColors.LIME.getColor()));
+    assertEquals(Sets.newHashSet(limeWoolTypeAndData), blockTypeAndDataToBlocks.keySet());
+    assertEquals(8, blockTypeAndDataToBlocks.get(limeWoolTypeAndData).size());
+  }
+
   //@Test
   //public void test_world_getPlayerEntityIds() throws Exception {
   //  if (getGameWrapper().hasPlayers()) {
@@ -490,7 +375,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //            p.getX(),
   //            p.getY(),
   //            p.getZ(),
-  //            BlockTypes.REDSTONE_BLOCK.getId()));
+  //            getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK)));
   //
   //    Block b = getGameWrapper().getLocation(p);
   //
@@ -530,7 +415,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //            p.getX(),
   //            p.getY(),
   //            p.getZ(),
-  //            BlockTypes.REDSTONE_BLOCK.getId()));
+  //            getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK)));
   //
   //    Block b = getGameWrapper().getLocation(p);
   //
