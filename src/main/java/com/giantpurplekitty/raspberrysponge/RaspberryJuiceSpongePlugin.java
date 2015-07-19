@@ -29,8 +29,6 @@ public class RaspberryJuiceSpongePlugin {
 
   @Subscribe
   public void onServerStart(ServerStartedEvent event) {
-    //System.out.println("XXXXXX SERVER STARTED XXXXX");
-
     // TODO: make config file, and make this configurable
     int port = 4711;
 
@@ -63,13 +61,10 @@ public class RaspberryJuiceSpongePlugin {
 
   @Subscribe
   public void onServerStopping(ServerStoppingEvent event) {
-
     //[NOTE - STRAIGHT PORT - sconover]
     remoteSessionsManager.closeAllSessions();
     serverThread.stop();
     serverThread = null;
     logger.info("Raspberry Juice Stopped");
-
-    //System.out.println("XXXXXX SERVER STOPPING XXXXX");
   }
 }

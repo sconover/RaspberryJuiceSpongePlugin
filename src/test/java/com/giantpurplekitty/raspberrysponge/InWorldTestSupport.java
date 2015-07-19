@@ -13,6 +13,9 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.tileentity.TileEntity;
+import org.spongepowered.api.data.manipulator.tileentity.SignData;
+import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -108,19 +111,17 @@ public abstract class InWorldTestSupport {
     Location block = gameWrapper.getLocation(justBeforeTestPosition);
     block.setBlockType(BlockTypes.SEA_LANTERN);
 
+    // TODO: rotate the sign in the direction of the player.
+    // don't know how to do that in sponge yet
+
     Location blockAbove = block.add(0, 1, 0);
     blockAbove.setBlockType(BlockTypes.STANDING_SIGN);
 
-    // TODO - write on the sign
-    //StandingSignProperties.applyRotation(blockAbove, BlockProperties.Rotation.NORTH);
-    //blockAbove.update();
-    //
-    //CanarySign sign = (CanarySign)blockAbove.getTileEntity();
-    //sign.setTextOnLine(name, 0);
-    //sign.setTextOnLine("bar", 1);
-    //sign.setTextOnLine("zzz", 2);
-    //sign.setTextOnLine("yyy", 3);
-  
+    TileEntity signTileEntity = blockAbove.getTileEntity().get();
+    SignData sign = signTileEntity.getOrCreate(SignData.class).get();
+    sign.setLine(0, Texts.of(name));
+    signTileEntity.offer(sign);
+
     if (gameWrapper.hasPlayers()) {
       LocationHelper.PositionAndRotation positionAndRotation =
           LocationHelper.getLocationFacingPosition(testPosition,

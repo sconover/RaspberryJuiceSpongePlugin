@@ -35,7 +35,7 @@ public class ApiInvocationHandler {
     this.logger = logger;
     this.out = out;
 
-    registerApiMethods(new OriginalApi(gameWrapper, logger));
+    registerApiMethods(new OriginalApi(gameWrapper));
     //registerApiMethods(new ExtendedApi(serverWrapper, logman));
   }
 

@@ -10,7 +10,6 @@ import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import java.util.List;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.Entity;
@@ -24,15 +23,13 @@ import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
 public class OriginalApi {
   private final GameWrapper gameWrapper;
   //private final ArrayDeque<BlockRightClickHook> blockHitQueue;
-  private final Logger logger;
 
   public OriginalApi(
-      GameWrapper gameWrapper,
+      GameWrapper gameWrapper
       //ArrayDeque<BlockRightClickHook> blockHitQueue,
-      Logger logger) {
+  ) {
     this.gameWrapper = gameWrapper;
     //this.blockHitQueue = blockHitQueue;
-    this.logger = logger;
   }
 
   @RPC("world.getBlock")
