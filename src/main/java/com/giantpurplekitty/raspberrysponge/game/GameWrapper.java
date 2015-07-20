@@ -31,6 +31,15 @@ public class GameWrapper {
     this.world = game.getServer().getWorld("world").get();
   }
 
+  public static Entity getEntityById(GameWrapper gameWrapper, int entityId) {
+    for (Entity entity: gameWrapper.getEntities()) {
+      if (entity.getEntityId() == entityId) {
+        return entity;
+      }
+    }
+    throw new RuntimeException(String.format("Couldn't find entity with id=%d", entityId));
+  }
+
   public void broadcastMessage(String chatStr) {
     server.getBroadcastSink().sendMessage(Texts.of(chatStr));
   }
@@ -83,7 +92,7 @@ public class GameWrapper {
     List<Player> playerList = new ArrayList<Player>(game.getServer().getOnlinePlayers());
     Collections.sort(playerList, new Comparator<Player>() {
       @Override public int compare(Player p1, Player p2) {
-        return EntityHelper.getEntityId(p1) - EntityHelper.getEntityId(p2);
+        return p1.getEntityId() - p2.getEntityId();
       }
     });
     return playerList;

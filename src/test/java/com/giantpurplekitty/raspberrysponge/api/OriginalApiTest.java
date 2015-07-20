@@ -23,7 +23,6 @@ import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
 
-import static com.giantpurplekitty.raspberrysponge.game.EntityHelper.getEntityId;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForBlockType;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
@@ -319,7 +318,7 @@ public class OriginalApiTest extends InWorldTestSupport {
     if (shouldRunBecausePlayerIsLoggedIntoGame()) {
       List<Integer> playerIds = new ArrayList<Integer>();
       for (Player p : getGameWrapper().getPlayers()) {
-        playerIds.add(getEntityId(p));
+        playerIds.add(p.getEntityId());
       }
       Collections.sort(playerIds);
       String expectedPlayerIdsStr =
@@ -727,7 +726,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3i p = nextTestPosition("entity.getTile");
 
       getApiInvocationHandler().handleLine(
-          String.format("entity.getTile(%d)", getEntityId(getGameWrapper().getFirstPlayer())));
+          String.format("entity.getTile(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       String expected = String.format("%d,%d,%d",
           p.getX() + PLAYER_PLACEMENT_X_OFFSET,
@@ -767,7 +766,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       getApiInvocationHandler().handleLine(
           String.format("entity.setTile(%d,5,5,5)",
-              getEntityId(getGameWrapper().getFirstPlayer())));
+              getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(
           new Vector3i(
@@ -795,7 +794,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       // entity.getPos position result is relative to the origin (spawn location)
 
       getApiInvocationHandler().handleLine(
-          String.format("entity.getPos(%d)", getEntityId(getGameWrapper().getFirstPlayer())));
+          String.format("entity.getPos(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
       assertEquals(
@@ -836,7 +835,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       getApiInvocationHandler().handleLine(
           String.format("entity.setPos(%d,5.2,5.2,5.2)",
-              getEntityId(getGameWrapper().getFirstPlayer())));
+              getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertVector3dEquals(
           new Vector3d(
@@ -862,7 +861,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
       getApiInvocationHandler().handleLine(
-          String.format("entity.getDirection(%d)", getEntityId(getGameWrapper().getFirstPlayer())));
+          String.format("entity.getDirection(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
 
@@ -887,7 +886,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
       getApiInvocationHandler().handleLine(
-          String.format("entity.getPitch(%d)", getEntityId(getGameWrapper().getFirstPlayer())));
+          String.format("entity.getPitch(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
       assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(0)));
@@ -904,7 +903,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
       getApiInvocationHandler().handleLine(
-          String.format("entity.getRotation(%d)", getEntityId(getGameWrapper().getFirstPlayer())));
+          String.format("entity.getRotation(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
       assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));

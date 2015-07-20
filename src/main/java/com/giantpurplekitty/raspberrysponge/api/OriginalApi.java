@@ -15,7 +15,7 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 
-import static com.giantpurplekitty.raspberrysponge.game.EntityHelper.getEntityById;
+import static com.giantpurplekitty.raspberrysponge.game.GameWrapper.getEntityById;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
 import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
