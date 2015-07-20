@@ -1,3 +1,4 @@
 [submodule "submodules/Sponge"]
 	path = submodules/Sponge
-	url = https://github.com/SpongePowered/Sponge.git
+	url = https://github.com/sconover/Sponge.git
+
