@@ -46,6 +46,5 @@ jar.manifest.mainAttributes(
         'Main-Class': 'com.giantpurplekitty.raspberrysponge.Main',
         'Implementation-Title': description,
         'Implementation-Version': version,
-        'Implementation-Vendor': 'http://www.giantpurplekitty.com',
-        'Sealed': true
+        'Implementation-Vendor': 'http://www.giantpurplekitty.com'
 )
