@@ -35,7 +35,7 @@ dependencies {
   compile 'com.google.inject:guice:4.0'
   compile 'org.apache.commons:commons-lang3:3.3.2'
   compile 'com.flowpowered:flow-math:1.0.0'
-  compile 'ninja.leaping.configurate:configurate-hocon:0.1'
+  compile 'ninja.leaping.configurate:configurate-hocon:1.1'
 
   testCompile 'junit:junit:4.8.1'
 }
