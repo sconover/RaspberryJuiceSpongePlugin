@@ -237,6 +237,38 @@ public class OriginalApiTest extends InWorldTestSupport {
         getColorForIntegerId(DataHelper.getData(block2.getBlock())));
   }
 
+
+  //TODO split out into v2 api
+  @Test
+  public void test_v2_world_setBlock() throws Exception {
+    Vector3i p = nextTestPosition("v2.world.setBlock");
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,redstone_block)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    Location block = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,wool,color=lime)",
+            p.getX() + 1,
+            p.getY(),
+            p.getZ()));
+
+    Location block2 = getGameWrapper().getLocation(
+        p.getX() + 1,
+        p.getY(),
+        p.getZ());
+
+    assertEquals(BlockTypes.WOOL, block2.getBlockType());
+    assertEquals(
+        DyeColors.LIME.getColor(),
+        getColorForIntegerId(DataHelper.getData(block2.getBlock())));
+  }
+
   @Test
   public void test_world_setBlocks_simple() throws Exception {
     Vector3i cubeCorner = nextTestPosition("world.setBlocks simple");
@@ -965,7 +997,7 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
     //
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    System.out.println(gson.toJson(allBlockInfos));
+    //System.out.println(gson.toJson(allBlockInfos));
   }
 
   static class BlockGson {

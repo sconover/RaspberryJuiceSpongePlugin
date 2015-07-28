@@ -92,6 +92,14 @@ public class Cuboid implements Iterable<Relative<Location>> {
     return this;
   }
 
+  public Cuboid changeBlocksToTypeWithProperties(BlockType newType, Map<String,String> properties) {
+    for (Relative<Location> relativeBlock : this) {
+      relativeBlock.object.setBlockType(newType);
+      relativeBlock.object.setBlock(DataHelper.setProperties(relativeBlock.object.getBlock(), properties));
+    }
+    return this;
+  }
+
   public Cuboid makeEmpty() {
     changeBlocksToType(BlockTypes.AIR);
     return this;

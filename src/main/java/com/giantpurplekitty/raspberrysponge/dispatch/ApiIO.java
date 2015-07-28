@@ -7,7 +7,9 @@ import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.player.Player;
@@ -36,6 +38,17 @@ public class ApiIO {
     } else if (parameterType.equals(float.class)) {
       // TODO: validate the string
       return Float.parseFloat(arg);
+    } else if (parameterType.equals(Map.class)) {
+      // TODO: validate the string
+      String[] pairs = arg.split("\\;");
+      Map<String,String> keyToValue = new LinkedHashMap<String, String>();
+      for (String pair: pairs) {
+        String[] keyAndValue = pair.split("=");
+        String key = keyAndValue[0];
+        String value = keyAndValue[1];
+        keyToValue.put(key, value);
+      }
+      return keyToValue;
     }
     throw new RuntimeException(String.format(
         "not sure how to convert arg %s to %s", arg, parameterType.getName()));

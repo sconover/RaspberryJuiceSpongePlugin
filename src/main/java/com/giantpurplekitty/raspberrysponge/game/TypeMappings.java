@@ -14,6 +14,7 @@ public class TypeMappings {
 
   private static Map<BlockType, Integer> BLOCK_TYPE_TO_MINECRAFT_INT_ID = null;
   private static Map<Integer, BlockType> MINECRAFT_INT_ID_TO_BLOCK_TYPE = null;
+  private static Map<String, BlockType> MINECRAFT_NAME_TO_BLOCK_TYPE = null;
 
   private static Map<Color, Integer> JAVA_AWT_COLOR_TO_MINECRAFT_INT_ID = null;
   private static Map<Integer, Color> MINECRAFT_INT_ID_TO_JAVA_AWT_COLOR = null;
@@ -230,6 +231,13 @@ public class TypeMappings {
           blockTypeAndIntegerId.getKey());
     }
 
+    MINECRAFT_NAME_TO_BLOCK_TYPE = new LinkedHashMap<String, BlockType>();
+    for (Map.Entry<BlockType, Integer> blockTypeAndIntegerId : BLOCK_TYPE_TO_MINECRAFT_INT_ID.entrySet()) {
+      MINECRAFT_NAME_TO_BLOCK_TYPE.put(
+          blockTypeAndIntegerId.getKey().getName(),
+          blockTypeAndIntegerId.getKey());
+    }
+
     // see http://minecraft.gamepedia.com/Data_Values#Wool.2C_Stained_Clay.2C_Stained_Glass_and_Carpet
     JAVA_AWT_COLOR_TO_MINECRAFT_INT_ID =
         new LinkedHashMap<Color, Integer>() {{
@@ -269,6 +277,12 @@ public class TypeMappings {
     checkState(MINECRAFT_INT_ID_TO_BLOCK_TYPE.containsKey(blockTypeId),
         String.format("no mapping found for block_type=%d", blockTypeId));
     return MINECRAFT_INT_ID_TO_BLOCK_TYPE.get(blockTypeId);
+  }
+
+  public static BlockType getBlockTypeForName(String blockTypeName) {
+    checkState(MINECRAFT_NAME_TO_BLOCK_TYPE.containsKey(blockTypeName),
+        String.format("no mapping found for block_type=%s", blockTypeName));
+    return MINECRAFT_NAME_TO_BLOCK_TYPE.get(blockTypeName);
   }
 
   public static int getIntegerIdForColor(Color color) {

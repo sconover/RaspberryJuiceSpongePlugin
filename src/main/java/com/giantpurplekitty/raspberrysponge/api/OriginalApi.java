@@ -7,7 +7,9 @@ import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockState;
@@ -17,6 +19,7 @@ import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.GameWrapper.getEntityById;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
+import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
 import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
 
@@ -80,6 +83,33 @@ public class OriginalApi {
         new Vector3i(x2, y2, z2))
         .fetchBlocks(gameWrapper)
         .changeBlocksToTypeWithData(getBlockTypeForIntegerId(blockTypeId), blockData);
+  }
+
+  @RPC("v2.world.setBlock")
+  public void v2_world_setBlock(int x, int y, int z, String blockTypeName) {
+    v2_world_setBlock(x, y, z, blockTypeName, new HashMap<String, String>());
+  }
+
+  @RPC("v2.world.setBlock")
+  public void v2_world_setBlock(
+      int x, int y, int z,
+      String blockTypeName, Map<String,String> propertyNameToValue) {
+
+    BlockType blockType = getBlockTypeForName("minecraft:" + blockTypeName);
+
+    //TODO: test check property values, w/ test(s)
+
+    CuboidReference.relativeTo(getOrigin(),
+        new Vector3i(x, y, z),
+        new Vector3i(x, y, z))
+        .fetchBlocks(gameWrapper)
+        .changeBlocksToTypeWithProperties(blockType, propertyNameToValue);
+    //TODO: setblocks
+    //
+    //world_setBlocks(
+    //    x, y, z,
+    //    x, y, z,
+    //    blockTypeId, blockData);
   }
 
   @RPC("world.getPlayerEntityIds")

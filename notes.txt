@@ -1,3 +1,11 @@
+The v2 api will need to be redone, esp re: property-setting, on top of a future, stable, better
+Sponge data manipulation capability.
+
+Probably will want to rethink, implement, and contribute a block+property metadata export
+capability.
+
+=====================
+
 Running the Sponge server
 
 1) git clone all sponge code
