@@ -4,6 +4,11 @@ Sponge data manipulation capability.
 Probably will want to rethink, implement, and contribute a block+property metadata export
 capability.
 
+Need a backfill and robustness phase
+  implement block events
+  write tests for bad inputs and assert outputs
+  make sure v1 api is solid
+
 =====================
 
 Running the Sponge server

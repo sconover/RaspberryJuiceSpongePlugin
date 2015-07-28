@@ -7,9 +7,7 @@ import com.giantpurplekitty.raspberrysponge.dispatch.RawArgString;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockState;
@@ -19,7 +17,6 @@ import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.GameWrapper.getEntityById;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForIntegerId;
-import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 import static com.giantpurplekitty.raspberrysponge.game.Util.blockPositionRelativeTo;
 import static com.giantpurplekitty.raspberrysponge.game.Util.calculateDirection;
 
@@ -37,7 +34,7 @@ public class OriginalApi {
 
   @RPC("world.getBlock")
   public BlockType world_getBlock(int x, int y, int z) {
-    return CuboidReference.relativeTo(getOrigin(), new Vector3i(x, y, z))
+    return CuboidReference.relativeTo(gameWrapper.getSpawnPosition(), new Vector3i(x, y, z))
         .fetchBlocks(gameWrapper)
         .firstBlock()
         .getBlockType();
@@ -78,38 +75,11 @@ public class OriginalApi {
       int x1, int y1, int z1,
       int x2, int y2, int z2,
       short blockTypeId, short blockData) {
-    CuboidReference.relativeTo(getOrigin(),
+    CuboidReference.relativeTo(gameWrapper.getSpawnPosition(),
         new Vector3i(x1, y1, z1),
         new Vector3i(x2, y2, z2))
         .fetchBlocks(gameWrapper)
         .changeBlocksToTypeWithData(getBlockTypeForIntegerId(blockTypeId), blockData);
-  }
-
-  @RPC("v2.world.setBlock")
-  public void v2_world_setBlock(int x, int y, int z, String blockTypeName) {
-    v2_world_setBlock(x, y, z, blockTypeName, new HashMap<String, String>());
-  }
-
-  @RPC("v2.world.setBlock")
-  public void v2_world_setBlock(
-      int x, int y, int z,
-      String blockTypeName, Map<String,String> propertyNameToValue) {
-
-    BlockType blockType = getBlockTypeForName("minecraft:" + blockTypeName);
-
-    //TODO: test check property values, w/ test(s)
-
-    CuboidReference.relativeTo(getOrigin(),
-        new Vector3i(x, y, z),
-        new Vector3i(x, y, z))
-        .fetchBlocks(gameWrapper)
-        .changeBlocksToTypeWithProperties(blockType, propertyNameToValue);
-    //TODO: setblocks
-    //
-    //world_setBlocks(
-    //    x, y, z,
-    //    x, y, z,
-    //    blockTypeId, blockData);
   }
 
   @RPC("world.getPlayerEntityIds")
@@ -120,10 +90,10 @@ public class OriginalApi {
 
   @RPC("world.getHeight")
   public int world_getHeight(int x, int z) {
-    int relativeX = getOrigin().getX() + x;
-    int relativeZ = getOrigin().getZ() + z;
+    int relativeX = gameWrapper.getSpawnPosition().getX() + x;
+    int relativeZ = gameWrapper.getSpawnPosition().getZ() + z;
     int absoluteHeight = gameWrapper.getHighestBlockYAt(relativeX, relativeZ);
-    return absoluteHeight - getOrigin().getY();
+    return absoluteHeight - gameWrapper.getSpawnPosition().getY();
   }
 
   @RPC("chat.post")
@@ -266,10 +236,6 @@ public class OriginalApi {
     return (float) getEntityById(gameWrapper, entityId).getRotation().getX();
   }
 
-  private Vector3i getOrigin() {
-    return gameWrapper.getSpawnPosition();
-  }
-
   private Direction getEntityDirection(Entity entity) {
     return new Direction(
         calculateDirection(
@@ -292,11 +258,12 @@ public class OriginalApi {
   //}
 
   private Vector3i getEntityBlockPositionRelativeToOrigin(Entity entity) {
-    return blockPositionRelativeTo(entity.getLocation().getBlockPosition(), getOrigin());
+    return blockPositionRelativeTo(entity.getLocation().getBlockPosition(),
+        gameWrapper.getSpawnPosition());
   }
 
   private void teleportEntityRelativeToOriginTo(Entity entity, float x, float y, float z) {
-    entity.setLocation(entity.getLocation().setPosition(getOrigin().toDouble().add(x, y, z)));
+    entity.setLocation(entity.getLocation().setPosition(gameWrapper.getSpawnPosition().toDouble().add(x, y, z)));
   }
 
   //

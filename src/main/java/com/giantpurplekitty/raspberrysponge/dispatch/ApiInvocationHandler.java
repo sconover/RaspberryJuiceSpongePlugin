@@ -1,8 +1,9 @@
 package com.giantpurplekitty.raspberrysponge.dispatch;
 
-import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import com.giantpurplekitty.raspberrysponge.api.OriginalApi;
+import com.giantpurplekitty.raspberrysponge.api.V2Api;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import com.giantpurplekitty.raspberrysponge.raspberryserver.RemoteSession;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ApiInvocationHandler {
     this.out = out;
 
     registerApiMethods(new OriginalApi(gameWrapper));
-    //registerApiMethods(new ExtendedApi(serverWrapper, logman));
+    registerApiMethods(new V2Api(gameWrapper));
   }
 
   private void registerApiMethods(Object api) {
