@@ -6,19 +6,28 @@ import com.giantpurplekitty.raspberrysponge.FileHelper;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
+import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
+import org.spongepowered.api.block.BlockMetadata;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.BooleanPropertyInfo;
+import org.spongepowered.api.block.EnumPropertyInfo;
+import org.spongepowered.api.block.IntegerPropertyInfo;
+import org.spongepowered.api.block.PropertyInfo;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
@@ -908,6 +917,82 @@ public class OriginalApiTest extends InWorldTestSupport {
       assertEquals(1, getTestOut().sends.size());
       assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(0)));
     }
+  }
+
+  @Test
+  public void test_print_block_metadata() throws Exception {
+    Vector3i p = nextTestPosition("printBlockMetadata");
+
+    List<BlockMetadata> allMetadata = new ArrayList<BlockMetadata>();
+    int count = 0;
+    Iterator<Map.Entry<BlockType, Integer>> iter = TypeMappings.blockTypeAndIdIterator();
+    while (iter.hasNext()) {
+      count++;
+      Map.Entry<BlockType, Integer> next = iter.next();
+      BlockType blockType = next.getKey();
+      Integer blockId = next.getValue();
+      allMetadata.add(blockType.getDefaultState().getMetadata());
+    }
+
+    List<BlockGson> allBlockInfos = new ArrayList<BlockGson>();
+    for (BlockMetadata blockMetadata: allMetadata) {
+      BlockGson blockInfo = new BlockGson();
+      blockInfo.name = blockMetadata.getType().getName();
+      blockInfo.id = TypeMappings.getIntegerIdForBlockType(blockMetadata.getType());
+      blockInfo.properties = new ArrayList();
+      for (PropertyInfo propertyInfo: blockMetadata.getPropertyInfos()) {
+        if (propertyInfo instanceof EnumPropertyInfo) {
+          EnumPropertyGson enumPropertyGson = new EnumPropertyGson();
+          enumPropertyGson.name = propertyInfo.getName();
+          enumPropertyGson.value = (String)propertyInfo.getDefaultValue();
+          enumPropertyGson.possible_values = propertyInfo.getAllowedValues();
+          blockInfo.properties.add(enumPropertyGson);
+        } else if (propertyInfo instanceof IntegerPropertyInfo) {
+          IntegerPropertyGson integerPropertyGson = new IntegerPropertyGson();
+          integerPropertyGson.name = propertyInfo.getName();
+          integerPropertyGson.value = (Integer)propertyInfo.getDefaultValue();
+          integerPropertyGson.possible_values = propertyInfo.getAllowedValues();
+          blockInfo.properties.add(integerPropertyGson);
+        } else if (propertyInfo instanceof BooleanPropertyInfo) {
+          BooleanPropertyGson booleanPropertyGson = new BooleanPropertyGson();
+          booleanPropertyGson.name = propertyInfo.getName();
+          booleanPropertyGson.value = (Boolean)propertyInfo.getDefaultValue();
+        } else {
+          throw new RuntimeException();
+        }
+      }
+      allBlockInfos.add(blockInfo);
+    }
+    //
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    System.out.println(gson.toJson(allBlockInfos));
+  }
+
+  static class BlockGson {
+    public int id;
+    public String name;
+    public List properties;
+  }
+
+  static class BooleanPropertyGson {
+    public final String type = "boolean";
+    public String name;
+    public Boolean value;
+    public List possible_values = Lists.newArrayList(true, false);
+  }
+
+  static class IntegerPropertyGson {
+    public final String type = "integer";
+    public String name;
+    public Integer value;
+    public List possible_values;
+  }
+
+  static class EnumPropertyGson {
+    public final String type = "enum";
+    public String name;
+    public String value;
+    public List possible_values;
   }
 
   static class PitchAndRotation {

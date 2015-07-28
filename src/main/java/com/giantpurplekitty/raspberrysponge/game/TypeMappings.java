@@ -1,6 +1,7 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import java.awt.Color;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.spongepowered.api.block.BlockType;
@@ -280,5 +281,9 @@ public class TypeMappings {
     checkState(MINECRAFT_INT_ID_TO_BLOCK_TYPE.containsKey(colorId),
         String.format("no mapping found for color_id=%d", colorId));
     return MINECRAFT_INT_ID_TO_JAVA_AWT_COLOR.get(colorId);
+  }
+
+  public static Iterator<Map.Entry<BlockType, Integer>> blockTypeAndIdIterator() {
+    return BLOCK_TYPE_TO_MINECRAFT_INT_ID.entrySet().iterator();
   }
 }

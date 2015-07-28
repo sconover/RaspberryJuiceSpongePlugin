@@ -50,6 +50,29 @@ gpk site
 
 =====================
 
+get away from using "data"...
+
+For each block
+  make one
+  get properties (IProperties)
+    get default value
+    get possible values...
+      get names of those values
+      ...detect property subclass and reuse ("property types")
+  generate json
+
+  ...what about validStates ?
+
+...do this for entities too...
+
+...codegen on client side
+  need tab completion in ipython
+
+...api v2:
+  setBlock(x,y,z,property-dict)
+
+=====================
+
 
 http://minecraft.gamepedia.com/Data_values/Block_IDs
 ruby -e 'puts File.read("/tmp/block_types.txt").split("\n").select{|line|line.include?(":")}.map{|line|parts=line.split(/\s+/); label=parts.find{|cell|cell.include?(":")}; li=parts.index(label); "#{label.ljust(40)}= #{parts[li-2]}"}.join("\n")'
