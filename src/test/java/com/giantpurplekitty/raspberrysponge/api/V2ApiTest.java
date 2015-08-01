@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Map;
@@ -136,4 +137,62 @@ public class V2ApiTest extends InWorldTestSupport {
     assertEquals(Sets.newHashSet(limeWoolTypeAndData), blockTypeAndDataToBlocks.keySet());
     assertEquals(8, blockTypeAndDataToBlocks.get(limeWoolTypeAndData).size());
   }
+
+  @Test
+  public void test_v2_world_setBlock_modify_existing_block_if_same_type() throws Exception {
+    Vector3i p = nextTestPosition("v2.world.setBlock");
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,piston,extended=false;facing=west)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    Location block = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.PISTON, block.getBlockType());
+    assertEquals(ImmutableMap.of("extended", false, "facing", "west"),
+        block.getBlock().getPrimitiveProperties());
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,piston,extended=true)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    Location block2 = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.PISTON, block2.getBlockType());
+    assertEquals(ImmutableMap.of("extended", true, "facing", "west"),
+        block2.getBlock().getPrimitiveProperties());
+  }
+
+  @Test
+  public void test_v2_world_getBlock() throws Exception {
+    Vector3i p = nextTestPosition("v2.world.getBlock");
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,redstone_block)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    Location block = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.world.setBlock(%d,%d,%d,wool,color=lime)",
+            p.getX() + 1,
+            p.getY(),
+            p.getZ()));
+
+    Location block2 = getGameWrapper().getLocation(
+        p.getX() + 1,
+        p.getY(),
+        p.getZ());
+
+    assertEquals(BlockTypes.WOOL, block2.getBlockType());
+    assertEquals(
+        DyeColors.LIME.getColor(),
+        getColorForIntegerId(DataHelper.getData(block2.getBlock())));
+  }
+
 }

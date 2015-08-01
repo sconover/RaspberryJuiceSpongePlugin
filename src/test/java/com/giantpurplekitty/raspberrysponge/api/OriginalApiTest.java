@@ -884,6 +884,7 @@ public class OriginalApiTest extends InWorldTestSupport {
           BooleanPropertyGson booleanPropertyGson = new BooleanPropertyGson();
           booleanPropertyGson.name = propertyInfo.getName();
           booleanPropertyGson.value = (Boolean)propertyInfo.getDefaultValue();
+          blockInfo.properties.add(booleanPropertyGson);
         } else {
           throw new RuntimeException();
         }
@@ -892,7 +893,7 @@ public class OriginalApiTest extends InWorldTestSupport {
     }
     //
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    //System.out.println(gson.toJson(allBlockInfos));
+    System.out.println(gson.toJson(allBlockInfos));
   }
 
   static class BlockGson {
