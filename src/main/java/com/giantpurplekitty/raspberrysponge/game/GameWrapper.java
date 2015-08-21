@@ -12,6 +12,7 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
@@ -38,6 +39,20 @@ public class GameWrapper {
       }
     }
     throw new RuntimeException(String.format("Couldn't find entity with id=%d", entityId));
+  }
+
+  public Optional<Entity> tryToSpawnEntity(EntityType entityType, Vector3i position) {
+    Optional<Entity> maybeEntity = world.createEntity(entityType, position);
+    if (maybeEntity.isPresent()) {
+      Entity entity = maybeEntity.get();
+      if (world.spawnEntity(entity)) {
+        return Optional.of(entity);
+      } else {
+        return Optional.absent();
+      }
+    } else {
+      return Optional.absent();
+    }
   }
 
   public void broadcastMessage(String chatStr) {

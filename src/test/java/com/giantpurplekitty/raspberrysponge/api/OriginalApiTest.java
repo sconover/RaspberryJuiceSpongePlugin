@@ -29,6 +29,8 @@ import org.spongepowered.api.block.EnumPropertyInfo;
 import org.spongepowered.api.block.IntegerPropertyInfo;
 import org.spongepowered.api.block.PropertyInfo;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
 
@@ -931,6 +933,19 @@ public class OriginalApiTest extends InWorldTestSupport {
       this.pitch = pitch;
       this.rotation = rotation;
     }
+  }
+
+  @Test
+  public void test_print_entity_metadata() throws Exception {
+    Vector3i p = nextTestPosition("printEntityMetadata");
+    //Vector3i p = new Vector3i(1, 80, 1);
+
+    Living ocelot = (Living)getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+
+    System.out.println(ocelot);
+    System.out.println(ocelot.getTaskNames());
+    ocelot.startTask("sit");
+    //ocelot.resetTask("sit");
   }
 
   // taken from https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Location.java
