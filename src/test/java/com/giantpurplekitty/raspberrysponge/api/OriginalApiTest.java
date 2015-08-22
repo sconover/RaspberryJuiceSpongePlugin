@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import org.spongepowered.api.block.EnumPropertyInfo;
 import org.spongepowered.api.block.IntegerPropertyInfo;
 import org.spongepowered.api.block.PropertyInfo;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.player.Player;
@@ -938,15 +940,36 @@ public class OriginalApiTest extends InWorldTestSupport {
   @Test
   public void test_print_entity_metadata() throws Exception {
     Vector3i p = nextTestPosition("printEntityMetadata");
-    //Vector3i p = new Vector3i(1, 80, 1);
 
-    Living ocelot = (Living)getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    List allLiving = new ArrayList();
 
-    System.out.println(ocelot);
-    System.out.println(ocelot.getTaskNames());
-    ocelot.startTask("sit");
-    //ocelot.resetTask("sit");
+    Field[] fields = EntityTypes.class.getDeclaredFields();
+    for (Field f: fields) {
+      System.out.println(f.getName());
+      Object value = f.get(EntityTypes.class);
+      if (value != null) {
+        EntityType entityType = (EntityType) value;
+        if (net.minecraft.entity.EntityLiving.class.isAssignableFrom(entityType.getEntityClass())) {
+          Living entityLiving = (Living)getGameWrapper().tryToSpawnEntity(entityType, p).get();
+
+          LivingGson livingGson = new LivingGson();
+          livingGson.name = f.getName().toLowerCase();
+          livingGson.tasks = entityLiving.getTaskNames();
+
+          allLiving.add(livingGson);
+        }
+      }
+    }
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    //System.out.println(gson.toJson(allLiving));
   }
+
+  static class LivingGson {
+    public String name;
+    public List tasks;
+  }
+
 
   // taken from https://github.com/Bukkit/Bukkit/blob/master/src/main/java/org/bukkit/Location.java
   // "setDirection"
