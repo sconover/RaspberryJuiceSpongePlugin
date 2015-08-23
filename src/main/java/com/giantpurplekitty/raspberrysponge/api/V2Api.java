@@ -106,4 +106,9 @@ public class V2Api {
   public void v2_entity_living_startTask(String entityUuid, String taskName) {
     ((Living)gameWrapper.getEntityByUuid(entityUuid).get()).startTask(taskName);
   }
+
+  @RPC("v2.entity.living.resetTask")
+  public void v2_entity_living_resetTask(String entityUuid, String taskName) {
+    ((Living)gameWrapper.getEntityByUuid(entityUuid).get()).resetTask(taskName);
+  }
 }

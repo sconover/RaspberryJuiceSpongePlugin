@@ -255,6 +255,7 @@ public class V2ApiTest extends InWorldTestSupport {
     assertEquals(ocelotUuid1, ocelot.getOwnerId());
   }
 
+  // TODO: robustness: good error when task is not available, or entity not supported, etc.
   @Test
   public void test_v2_entity_living_startTask() throws Exception {
     Vector3i p = nextTestPosition("v2.entity.startTask");
@@ -290,5 +291,22 @@ public class V2ApiTest extends InWorldTestSupport {
     ocelot2 = (Ocelot) getGameWrapper().getEntityByUuid(ocelot2.getUniqueId().toString()).get();
     assertTrue(ocelot1.isSitting());
     assertTrue(ocelot2.isSitting());
+  }
+
+  @Test
+  public void test_v2_entity_living_resetTask() throws Exception {
+    Vector3i p = nextTestPosition("v2.entity.resetTask");
+
+    Ocelot ocelot = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    assertFalse(ocelot.isSitting());
+    ocelot.startTask("sit");
+    assertTrue(ocelot.isSitting());
+
+    getApiInvocationHandler().handleRawInvocation(
+        String.format("v2.entity.living.resetTask(%s,sit)",
+            ocelot.getUniqueId().toString()));
+
+    ocelot = (Ocelot) getGameWrapper().getEntityByUuid(ocelot.getUniqueId().toString()).get();
+    assertFalse(ocelot.isSitting());
   }
 }
