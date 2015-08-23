@@ -3,6 +3,7 @@ package com.giantpurplekitty.raspberrysponge.game;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -180,5 +181,9 @@ public class GameWrapper {
             Joiner.on(",").join(allTypeNames)));
 
     return supportedEntityTypes.get(entityTypeName);
+  }
+
+  public Collection<Entity> getEntities(Predicate filter) {
+    return world.getEntities(filter);
   }
 }

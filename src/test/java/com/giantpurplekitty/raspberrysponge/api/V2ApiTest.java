@@ -7,8 +7,10 @@ import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
@@ -237,7 +239,7 @@ public class V2ApiTest extends InWorldTestSupport {
             p.getZ()));
 
     assertEquals(1, getTestOut().sends.size());
-    String[] resultParts = getTestOut().sends.get(0).split(",");
+    String[] resultParts = getTestOut().sends.get(0).split(":");
     String ocelotUuid1 = resultParts[1];
 
     getApiInvocationHandler().handleRawInvocation(
@@ -248,7 +250,7 @@ public class V2ApiTest extends InWorldTestSupport {
             ocelotUuid1));
 
     assertEquals(2, getTestOut().sends.size());
-    resultParts = getTestOut().sends.get(1).split(",");
+    resultParts = getTestOut().sends.get(1).split(":");
     String ocelotUuid2 = resultParts[1];
 
     Ocelot ocelot = (Ocelot) getGameWrapper().getEntityByUuid(ocelotUuid2).get();
@@ -260,7 +262,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_entity_living_startTask() throws Exception {
     Vector3i p = nextTestPosition("v2.entity.startTask");
 
-    Ocelot ocelot = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    Ocelot ocelot = spawnOcelotAt(p);
     assertFalse(ocelot.isSitting());
 
     getApiInvocationHandler().handleRawInvocation(
@@ -275,8 +277,8 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_batch() throws Exception {
     Vector3i p = nextTestPosition("v2.batch");
 
-    Ocelot ocelot1 = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
-    Ocelot ocelot2 = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    Ocelot ocelot1 = spawnOcelotAt(p);
+    Ocelot ocelot2 = spawnOcelotAt(p);
     assertFalse(ocelot1.isSitting());
     assertFalse(ocelot2.isSitting());
 
@@ -297,7 +299,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_entity_living_resetTask() throws Exception {
     Vector3i p = nextTestPosition("v2.entity.resetTask");
 
-    Ocelot ocelot = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    Ocelot ocelot = spawnOcelotAt(p);
     assertFalse(ocelot.isSitting());
     ocelot.startTask("sit");
     assertTrue(ocelot.isSitting());
@@ -308,5 +310,50 @@ public class V2ApiTest extends InWorldTestSupport {
 
     ocelot = (Ocelot) getGameWrapper().getEntityByUuid(ocelot.getUniqueId().toString()).get();
     assertFalse(ocelot.isSitting());
+  }
+
+  @Test
+  public void test_v2_get_entities_in_bounding_cube() throws Exception {
+    Vector3i p = nextTestPosition("v2.entity.getAllInBoundingCube");
+    Vector3i otherCorner = p.add(20, 0, 20);
+
+    // make a floor
+    CuboidReference.fromCorners(p, otherCorner)
+        .fetchBlocks(getGameWrapper())
+        .changeBlocksToType(BlockTypes.GOLD_BLOCK);
+
+    Ocelot ocelot1 = spawnOcelotAt(p);
+    ocelot1.startTask("sit");
+
+    Ocelot ocelot2 = spawnOcelotAt(p.add(3, 0, 3));
+    ocelot2.startTask("sit");
+
+    Ocelot ocelot3 = spawnOcelotAt(p.add(5, 0, 5));
+    ocelot3.startTask("sit");
+
+    Ocelot ocelot4 = spawnOcelotAt(p.add(14, 0, 14));
+    ocelot4.startTask("sit");
+
+    getApiInvocationHandler().handleRawInvocation(
+        String.format("v2.entity.getAllInBoundingCube(%d,%d,%d,%d,%d,%d)",
+            p.getX(), p.getY()-1, p.getZ(),
+            p.getX()+10, otherCorner.getY(), p.getZ()+10));
+
+    assertEquals(1, getTestOut().sends.size());
+    String[] entities = getTestOut().sends.get(0).split(",");
+    Set<Pair<String,String>> typeUuidPairs = new HashSet<Pair<String, String>>();
+    for (String entityResult: entities) {
+      String[] parts = entityResult.split(":");
+      typeUuidPairs.add(Pair.of(parts[0], parts[1]));
+    }
+    assertEquals(Sets.newHashSet(
+            Pair.of("ocelot", ocelot1.getUniqueId().toString()),
+            Pair.of("ocelot", ocelot2.getUniqueId().toString()),
+            Pair.of("ocelot", ocelot3.getUniqueId().toString())),
+        typeUuidPairs);
+  }
+
+  private Ocelot spawnOcelotAt(Vector3i p) {
+    return (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
   }
 }

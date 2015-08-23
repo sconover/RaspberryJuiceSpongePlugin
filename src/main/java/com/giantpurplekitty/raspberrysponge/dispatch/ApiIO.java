@@ -86,9 +86,16 @@ public class ApiIO {
       return String.valueOf((Float) objectResult);
     } else if (objectResult instanceof Integer) {
       return String.valueOf((Integer) objectResult);
+    } else if (objectResult instanceof Entity[]) {
+      Entity[] entities = (Entity[]) objectResult;
+      List<String> strings = new ArrayList<String>();
+      for (Entity entity: entities) {
+        strings.add(serializeResult(entity, game));
+      }
+      return Joiner.on(",").join(strings);
     } else if (objectResult instanceof Entity) {
       Entity entity = (Entity)objectResult;
-      return String.format("%s,%s",
+      return String.format("%s:%s",
           game.getSupportedEntityTypeToName().get(entity.getType()),
           entity.getUniqueId().toString());
     }

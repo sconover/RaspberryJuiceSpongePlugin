@@ -2,6 +2,10 @@ package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import java.util.Collection;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
 
 /**
@@ -94,5 +98,17 @@ public class CuboidReference {
         start.getZ() + centerZStart);
 
     return new CuboidReference(newStart, centerXSize, centerYSize, centerZSize);
+  }
+
+  public Collection<Entity> fetchEntities(GameWrapper gameWrapper) {
+    return gameWrapper.getEntities(new Predicate<Entity>() {
+      @Override public boolean apply(Entity entity) {
+        Vector3i p = entity.getLocation().getBlockPosition();
+        return p.getX() >= start.getX() && p.getX() < start.getX() + xSize &&
+            p.getY() >= start.getY() && p.getY() < start.getY() + ySize &&
+            p.getZ() >= start.getZ() && p.getZ() < start.getZ() + zSize &&
+            !(entity instanceof Player);
+      }
+    });
   }
 }

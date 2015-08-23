@@ -5,6 +5,7 @@ import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import com.google.common.base.Optional;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -110,5 +111,14 @@ public class V2Api {
   @RPC("v2.entity.living.resetTask")
   public void v2_entity_living_resetTask(String entityUuid, String taskName) {
     ((Living)gameWrapper.getEntityByUuid(entityUuid).get()).resetTask(taskName);
+  }
+
+  @RPC("v2.entity.getAllInBoundingCube")
+  public Entity[] v2_entity_getAllInBoundingCube(
+      int x1, int y1, int z1,
+      int x2, int y2, int z2) {
+    Collection<Entity> entities = CuboidReference.fromCorners(new Vector3i(x1, y1, z1), new Vector3i(x2, y2, z2))
+          .fetchEntities(gameWrapper);
+    return entities.toArray(new Entity[entities.size()]);
   }
 }
