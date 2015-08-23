@@ -59,18 +59,19 @@ public class ApiInvocationHandler {
     }
   }
 
-  public void handleLine(String line) {
-    //System.out.println(line);
-    String methodName = line.substring(0, line.indexOf("("));
-    //split string into args, handles , inside " i.e. ","
-    String rawArgStr = line.substring(line.indexOf("(") + 1, line.length() - 1);
-    String[] args = rawArgStr.equals("") ? new String[] {} : rawArgStr.split(",");
-    //System.out.println(methodName + ":" + Arrays.toString(args));
-    handleCommand(methodName, args, rawArgStr);
+  public void handleRawInvocation(String raw) {
+    String[] lines = raw.split("\n");
+
+    for (String line: lines) {
+      String methodName = line.substring(0, line.indexOf("("));
+      //split string into args, handles , inside " i.e. ","
+      String rawArgStr = line.substring(line.indexOf("(") + 1, line.length() - 1);
+      String[] args = rawArgStr.equals("") ? new String[] {} : rawArgStr.split(",");
+      handleCommand(methodName, args, rawArgStr);
+    }
   }
 
   protected void handleCommand(String c, String[] args, String rawArgStr) {
-
     try {
       Pair<String, Integer> key = ImmutablePair.of(c, args.length);
 

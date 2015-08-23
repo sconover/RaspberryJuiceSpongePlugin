@@ -86,7 +86,7 @@ public class RemoteSession {
     int processedCount = 0;
     String message;
     while ((message = inQueue.poll()) != null) {
-      apiInvocationHandler.handleLine(message);
+      apiInvocationHandler.handleRawInvocation(message);
       processedCount++;
       if (processedCount >= maxCommandsPerTick) {
         logger.warn("Over " + maxCommandsPerTick +

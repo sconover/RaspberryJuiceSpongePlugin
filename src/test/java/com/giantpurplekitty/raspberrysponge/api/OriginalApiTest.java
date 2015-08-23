@@ -64,7 +64,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_chat_post() throws Exception {
     String chatMessage = String.format("this-is-the-chat-message-%d", System.currentTimeMillis());
 
-    getApiInvocationHandler().handleLine(String.format("chat.post(%s)", chatMessage));
+    getApiInvocationHandler().handleRawInvocation(String.format("chat.post(%s)", chatMessage));
 
     String last20LinesOfLogFile = FileHelper.readEndOfLogfile();
 
@@ -87,7 +87,7 @@ public class OriginalApiTest extends InWorldTestSupport {
         BlockTypes.REDSTONE_BLOCK,
         getGameWrapper().getLocation(p.getX() + 3, p.getY() + 3, p.getZ() + 3).getBlockType());
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.getBlock(%d,%d,%d)", 3, 3, 3));
 
     assertEquals(
@@ -116,14 +116,14 @@ public class OriginalApiTest extends InWorldTestSupport {
             getIntegerIdForColor(DyeColors.LIME.getColor()));
     block2.setBlock(limeWoolBlock);
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.getBlockWithData(%d,%d,%d)", p.getX(), p.getY(), p.getZ()));
 
     assertEquals(
         String.format("%d,%d", getIntegerIdForBlockType(BlockTypes.REDSTONE_BLOCK), 0),
         getTestOut().sends.get(0));
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.getBlockWithData(%d,%d,%d)", p.getX() + 1, p.getY(), p.getZ()));
 
     assertEquals(
@@ -137,7 +137,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   public void test_world_setBlock() throws Exception {
     Vector3i p = nextTestPosition("world.setBlock");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.setBlock(%d,%d,%d,%s)",
             p.getX(),
             p.getY(),
@@ -147,7 +147,7 @@ public class OriginalApiTest extends InWorldTestSupport {
     Location block = getGameWrapper().getLocation(p);
     assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.setBlock(%d,%d,%d,%d,%d)",
             p.getX() + 1,
             p.getY(),
@@ -176,7 +176,7 @@ public class OriginalApiTest extends InWorldTestSupport {
             cubeCorner.getY() + 1,
             cubeCorner.getZ() + 1);
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d)",
             cubeCorner.getX(),
             cubeCorner.getY(),
@@ -227,7 +227,7 @@ public class OriginalApiTest extends InWorldTestSupport {
             cubeCorner.getY() + 1,
             cubeCorner.getZ() + 1);
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d,%d)",
             cubeCorner.getX(),
             cubeCorner.getY(),
@@ -262,7 +262,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       String expectedPlayerIdsStr =
           Joiner.on("|").join(playerIds);
 
-      getApiInvocationHandler().handleLine("world.getPlayerEntityIds()");
+      getApiInvocationHandler().handleRawInvocation("world.getPlayerEntityIds()");
 
       assertEquals(
           Lists.newArrayList(expectedPlayerIdsStr),
@@ -292,7 +292,7 @@ public class OriginalApiTest extends InWorldTestSupport {
           getGameWrapper().getHighestBlockYAt(p.getX() + 3, p.getZ() + 7));
 
       // x and z are relative to the origin
-      getApiInvocationHandler().handleLine("world.getHeight(3,7)");
+      getApiInvocationHandler().handleRawInvocation("world.getHeight(3,7)");
 
       // the first block before there's just air, at this x,z location,
       // relative to the player's origin
@@ -313,7 +313,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    Vector3i p = nextTestPosition("block hit event");
   //
-  //    getApiInvocationHandler().handleLine(
+  //    getApiInvocationHandler().handleRawInvocation(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
   //            p.getX(),
   //            p.getY(),
@@ -327,7 +327,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
-  //    getApiInvocationHandler().handleLine("events.block.hits()");
+  //    getApiInvocationHandler().handleRawInvocation("events.block.hits()");
   //
   //    int expectedFace = 7;
   //
@@ -353,7 +353,7 @@ public class OriginalApiTest extends InWorldTestSupport {
   //
   //    Vector3i p = nextTestPosition("block hit event");
   //
-  //    getApiInvocationHandler().handleLine(
+  //    getApiInvocationHandler().handleRawInvocation(
   //        String.format("world.setBlock(%d,%d,%d,%d)",
   //            p.getX(),
   //            p.getY(),
@@ -365,12 +365,12 @@ public class OriginalApiTest extends InWorldTestSupport {
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
-  //    getApiInvocationHandler().handleLine("events.clear()");
+  //    getApiInvocationHandler().handleRawInvocation("events.clear()");
   //
   //    getPluginListener().onBlockHit(
   //        new BlockRightClickHook(getGameWrapper().getFirstPlayer(), b));
   //
-  //    getApiInvocationHandler().handleLine("events.block.hits()");
+  //    getApiInvocationHandler().handleRawInvocation("events.block.hits()");
   //
   //    int expectedFace = 7;
   //
@@ -393,8 +393,8 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.getTile()");
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation("player.getTile()");
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
 
       String expected = String.format("%d,%d,%d",
@@ -408,7 +408,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       setUpAtPlayerOrigin(new Vector3i(3, 3, 3));
 
-      getApiInvocationHandler().handleLine("player.getTile()");
+      getApiInvocationHandler().handleRawInvocation("player.getTile()");
 
       expected = String.format("%d,%d,%d",
           p.getX() + PLAYER_PLACEMENT_X_OFFSET - 3,
@@ -446,7 +446,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // move the player diagonally
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.setTile(%s,5,5,5)", getGameWrapper().getFirstPlayer().getName()));
 
       assertEquals(
@@ -462,7 +462,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.setTile(7,7,7)");
+      getApiInvocationHandler().handleRawInvocation("player.setTile(7,7,7)");
 
       assertEquals(
           new Vector3i(
@@ -487,7 +487,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // player.getPos position result is relative to the origin (spawn location)
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.getPos(%s)", getGameWrapper().getFirstPlayer().getName()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -500,7 +500,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.getPos()");
+      getApiInvocationHandler().handleRawInvocation("player.getPos()");
 
       assertEquals(2, getTestOut().sends.size());
       assertEquals(
@@ -539,7 +539,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // move the player diagonally
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.setPos(%s,5.2,5.2,5.2)",
               getGameWrapper().getFirstPlayer().getName()));
 
@@ -556,7 +556,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.setPos(7.2,7.2,7.2)");
+      getApiInvocationHandler().handleRawInvocation("player.setPos(7.2,7.2,7.2)");
 
       assertVector3dEquals(
           new Vector3d(
@@ -577,7 +577,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.getDirection(%s)", getGameWrapper().getFirstPlayer().getName()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -593,7 +593,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.getDirection()");
+      getApiInvocationHandler().handleRawInvocation("player.getDirection()");
 
       assertEquals(2, getTestOut().sends.size());
 
@@ -618,7 +618,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.getPitch(%s)", getGameWrapper().getFirstPlayer().getName()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -626,7 +626,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.getPitch()");
+      getApiInvocationHandler().handleRawInvocation("player.getPitch()");
 
       assertEquals(2, getTestOut().sends.size());
       assertEquals(49, (int) Float.parseFloat(getTestOut().sends.get(1)));
@@ -642,7 +642,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("player.getRotation(%s)", getGameWrapper().getFirstPlayer().getName()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -650,7 +650,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // when player name is blank, default to first player
 
-      getApiInvocationHandler().handleLine("player.getRotation()");
+      getApiInvocationHandler().handleRawInvocation("player.getRotation()");
 
       assertEquals(2, getTestOut().sends.size());
       assertEquals(93, (int) Float.parseFloat(getTestOut().sends.get(1)));
@@ -663,7 +663,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       Vector3i p = nextTestPosition("entity.getTile");
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.getTile(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       String expected = String.format("%d,%d,%d",
@@ -702,7 +702,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // move the entity diagonally
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.setTile(%d,5,5,5)",
               getGameWrapper().getFirstPlayer().getEntityId()));
 
@@ -731,7 +731,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // entity.getPos position result is relative to the origin (spawn location)
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.getPos(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -771,7 +771,7 @@ public class OriginalApiTest extends InWorldTestSupport {
 
       // move the entity diagonally
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.setPos(%d,5.2,5.2,5.2)",
               getGameWrapper().getFirstPlayer().getEntityId()));
 
@@ -798,7 +798,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.getDirection(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -823,7 +823,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.getPitch(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());
@@ -840,7 +840,7 @@ public class OriginalApiTest extends InWorldTestSupport {
       Vector3d rotation = new Vector3d(yaw, pitch, roll);
       getGameWrapper().getFirstPlayer().setRotation(rotation);
 
-      getApiInvocationHandler().handleLine(
+      getApiInvocationHandler().handleRawInvocation(
           String.format("entity.getRotation(%d)", getGameWrapper().getFirstPlayer().getEntityId()));
 
       assertEquals(1, getTestOut().sends.size());

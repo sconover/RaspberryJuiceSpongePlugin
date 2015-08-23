@@ -25,6 +25,7 @@ import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorFor
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForBlockType;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class V2ApiTest extends InWorldTestSupport {
@@ -33,7 +34,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_world_setBlock() throws Exception {
     Vector3i p = nextTestPosition("v2.world.setBlock");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,redstone_block)",
             p.getX(),
             p.getY(),
@@ -42,7 +43,7 @@ public class V2ApiTest extends InWorldTestSupport {
     Location block = getGameWrapper().getLocation(p);
     assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,wool,color=lime)",
             p.getX() + 1,
             p.getY(),
@@ -69,7 +70,7 @@ public class V2ApiTest extends InWorldTestSupport {
             cubeCorner.getY() + 1,
             cubeCorner.getZ() + 1);
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlocks(%d,%d,%d,%d,%d,%d,redstone_block)",
             cubeCorner.getX(),
             cubeCorner.getY(),
@@ -119,7 +120,7 @@ public class V2ApiTest extends InWorldTestSupport {
             cubeCorner.getY() + 1,
             cubeCorner.getZ() + 1);
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("world.setBlocks(%d,%d,%d,%d,%d,%d,%d,%d)",
             cubeCorner.getX(),
             cubeCorner.getY(),
@@ -147,7 +148,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_world_setBlock_modify_existing_block_if_same_type() throws Exception {
     Vector3i p = nextTestPosition("v2.world.setBlock");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,piston,extended=false;facing=west)",
             p.getX(),
             p.getY(),
@@ -158,7 +159,7 @@ public class V2ApiTest extends InWorldTestSupport {
     assertEquals(ImmutableMap.of("extended", false, "facing", "west"),
         block.getBlock().getPrimitiveProperties());
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,piston,extended=true)",
             p.getX(),
             p.getY(),
@@ -174,7 +175,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_world_getBlock() throws Exception {
     Vector3i p = nextTestPosition("v2.world.getBlock");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,redstone_block)",
             p.getX(),
             p.getY(),
@@ -183,7 +184,7 @@ public class V2ApiTest extends InWorldTestSupport {
     Location block = getGameWrapper().getLocation(p);
     assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.world.setBlock(%d,%d,%d,wool,color=lime)",
             p.getX() + 1,
             p.getY(),
@@ -204,7 +205,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_entity_spawn() throws Exception {
     Vector3i p = nextTestPosition("v2.entity.spawn");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.entity.spawn(%d,%d,%d,ocelot)",
             p.getX(),
             p.getY(),
@@ -229,7 +230,7 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_entity_spawn__and_set_owner() throws Exception {
     Vector3i p = nextTestPosition("v2.entity.spawn");
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.entity.spawn(%d,%d,%d,ocelot)",
             p.getX(),
             p.getY(),
@@ -239,7 +240,7 @@ public class V2ApiTest extends InWorldTestSupport {
     String[] resultParts = getTestOut().sends.get(0).split(",");
     String ocelotUuid1 = resultParts[1];
 
-    getApiInvocationHandler().handleLine(
+    getApiInvocationHandler().handleRawInvocation(
         String.format("v2.entity.spawn(%d,%d,%d,ocelot,owner=%s)",
             p.getX(),
             p.getY(),
@@ -250,7 +251,44 @@ public class V2ApiTest extends InWorldTestSupport {
     resultParts = getTestOut().sends.get(1).split(",");
     String ocelotUuid2 = resultParts[1];
 
-    Ocelot ocelot = (Ocelot)getGameWrapper().getEntityByUuid(ocelotUuid2).get();
+    Ocelot ocelot = (Ocelot) getGameWrapper().getEntityByUuid(ocelotUuid2).get();
     assertEquals(ocelotUuid1, ocelot.getOwnerId());
+  }
+
+  @Test
+  public void test_v2_entity_living_startTask() throws Exception {
+    Vector3i p = nextTestPosition("v2.entity.startTask");
+
+    Ocelot ocelot = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    assertFalse(ocelot.isSitting());
+
+    getApiInvocationHandler().handleRawInvocation(
+        String.format("v2.entity.living.startTask(%s,sit)",
+            ocelot.getUniqueId().toString()));
+
+    ocelot = (Ocelot) getGameWrapper().getEntityByUuid(ocelot.getUniqueId().toString()).get();
+    assertTrue(ocelot.isSitting());
+  }
+
+  @Test
+  public void test_v2_batch() throws Exception {
+    Vector3i p = nextTestPosition("v2.batch");
+
+    Ocelot ocelot1 = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    Ocelot ocelot2 = (Ocelot) getGameWrapper().tryToSpawnEntity(EntityTypes.OCELOT, p).get();
+    assertFalse(ocelot1.isSitting());
+    assertFalse(ocelot2.isSitting());
+
+    getApiInvocationHandler().handleRawInvocation(
+        String.format(
+                "v2.entity.living.startTask(%s,sit)\n" +
+                "v2.entity.living.startTask(%s,sit)",
+            ocelot1.getUniqueId().toString(),
+            ocelot2.getUniqueId().toString()));
+
+    ocelot1 = (Ocelot) getGameWrapper().getEntityByUuid(ocelot1.getUniqueId().toString()).get();
+    ocelot2 = (Ocelot) getGameWrapper().getEntityByUuid(ocelot2.getUniqueId().toString()).get();
+    assertTrue(ocelot1.isSitting());
+    assertTrue(ocelot2.isSitting());
   }
 }
