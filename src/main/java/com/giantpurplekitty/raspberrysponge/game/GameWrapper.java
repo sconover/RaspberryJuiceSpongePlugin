@@ -1,18 +1,25 @@
 package com.giantpurplekitty.raspberrysponge.game;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.world.Location;
@@ -24,12 +31,31 @@ public class GameWrapper {
   private final Game game;
   private final World world;
   private final Server server;
-  private Entity entities;
+  private final Map<EntityType, String> entityTypeToName;
+  private final Map<String, EntityType> nameToEntityType;
 
   public GameWrapper(Game game) {
     this.game = game;
     this.server = game.getServer();
     this.world = game.getServer().getWorld("world").get();
+
+    nameToEntityType = new LinkedHashMap<String, EntityType>();
+    entityTypeToName = new LinkedHashMap<EntityType, String>();
+    try {
+      Field[] fields = EntityTypes.class.getDeclaredFields();
+      for (Field f: fields) {
+        Object value = f.get(EntityTypes.class);
+        if (value != null) {
+          EntityType entityType = (EntityType) value;
+          if (net.minecraft.entity.EntityLiving.class.isAssignableFrom(entityType.getEntityClass())) {
+            nameToEntityType.put(f.getName().toLowerCase(), entityType);
+            entityTypeToName.put(entityType, f.getName().toLowerCase());
+          }
+        }
+      }
+    } catch (IllegalAccessException e) {
+      throw Throwables.propagate(e);
+    }
   }
 
   public static Entity getEntityById(GameWrapper gameWrapper, int entityId) {
@@ -53,6 +79,10 @@ public class GameWrapper {
     } else {
       return Optional.absent();
     }
+  }
+
+  public Optional<Entity> getEntityByUuid(String uuid) {
+    return world.getEntity(UUID.fromString(uuid));
   }
 
   public void broadcastMessage(String chatStr) {
@@ -124,5 +154,27 @@ public class GameWrapper {
 
   public Collection<Entity> getEntities() {
     return world.getEntities();
+  }
+
+  public Map<String,EntityType> getSupportedNameToEntityType() {
+    return nameToEntityType;
+  }
+
+  public Map<EntityType,String> getSupportedEntityTypeToName() {
+    return entityTypeToName;
+  }
+
+  public EntityType supportedEntityTypeForName(String entityTypeName) {
+    Map<String,EntityType> supportedEntityTypes = getSupportedNameToEntityType();
+    List<String> allTypeNames = new ArrayList<String>(supportedEntityTypes.keySet());
+    Collections.sort(allTypeNames);
+
+    checkState(supportedEntityTypes.containsKey(entityTypeName),
+        String.format("entity type '%s' not found or not supported. " +
+        "Supported entity types are: %s",
+            entityTypeName,
+            Joiner.on(",").join(allTypeNames)));
+
+    return supportedEntityTypes.get(entityTypeName);
   }
 }

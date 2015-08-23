@@ -99,7 +99,7 @@ public class ApiInvocationHandler {
           method.invoke(apiObject, convertedArgs);
         } else {
           Object result = method.invoke(apiObject, convertedArgs);
-          out.send(ApiIO.serializeResult(result));
+          out.send(ApiIO.serializeResult(result, gameWrapper));
         }
         return;
       }

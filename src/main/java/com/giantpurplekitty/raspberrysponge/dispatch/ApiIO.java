@@ -3,6 +3,7 @@ package com.giantpurplekitty.raspberrysponge.dispatch;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.api.OriginalApi;
+import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 
 public class ApiIO {
@@ -54,49 +56,24 @@ public class ApiIO {
         "not sure how to convert arg %s to %s", arg, parameterType.getName()));
   }
 
-  public static String serializeResult(Object objectResult) {
+  public static String serializeResult(Object objectResult, GameWrapper game) {
     if (objectResult instanceof BlockType) {
       return String.valueOf(TypeMappings.getIntegerIdForBlockType(((BlockType) objectResult)));
-    }
-    //} else if (objectResult instanceof BlockType[]) {
-    //  BlockType[] blockTypes = (BlockType[]) objectResult;
-    //  String[] strings = new String[blockTypes.length];
-    //  for (int i = 0; i < blockTypes.length; i++) {
-    //    strings[i] = serializeResult(blockTypes[i]);
-    //  }
-    //  return serializeResult(strings);
-    //} else if (objectResult instanceof String[]) {
-    //  return Joiner.on(",").join((String[]) objectResult);
-    else if (objectResult instanceof Pair) {
+    } else if (objectResult instanceof Pair) {
       Pair pair = (Pair) objectResult;
       return Joiner.on(",").join(
-          serializeResult(pair.getLeft()),
-          serializeResult(pair.getRight()));
-    }
-    //} else if (objectResult instanceof Short) {
-    //  return String.valueOf(objectResult);
-    //} else if (objectResult instanceof String) {
-    //  return (String) objectResult;
-    else if (objectResult instanceof Player) {
+          serializeResult(pair.getLeft(), game),
+          serializeResult(pair.getRight(), game));
+    } else if (objectResult instanceof Player) {
       return String.valueOf(((Player) objectResult).getEntityId());
     } else if (objectResult instanceof Player[]) {
       Player[] players = (Player[]) objectResult;
       List<String> strings = new ArrayList<String>();
       for (Player p : players) {
-        strings.add(serializeResult(p));
+        strings.add(serializeResult(p, game));
       }
       return Joiner.on("|").join(strings);
-    }
-    //} else if (objectResult instanceof OriginalApi.BlockEvent) {
-    //  return ((OriginalApi.BlockEvent) objectResult).toApiResult();
-    //} else if (objectResult instanceof OriginalApi.BlockEvent[]) {
-    //  OriginalApi.BlockEvent[] blockEvents = (OriginalApi.BlockEvent[]) objectResult;
-    //  List<String> strings = new ArrayList<String>();
-    //  for (OriginalApi.BlockEvent blockEvent : blockEvents) {
-    //    strings.add(serializeResult(blockEvent));
-    //  }
-    //  return Joiner.on("|").join(strings);
-    else if (objectResult instanceof Vector3i) {
+    } else if (objectResult instanceof Vector3i) {
       Vector3i v = ((Vector3i) objectResult);
       return String.format("%d,%d,%d", v.getX(), v.getY(), v.getZ());
     } else if (objectResult instanceof OriginalApi.Direction) {
@@ -109,6 +86,11 @@ public class ApiIO {
       return String.valueOf((Float) objectResult);
     } else if (objectResult instanceof Integer) {
       return String.valueOf((Integer) objectResult);
+    } else if (objectResult instanceof Entity) {
+      Entity entity = (Entity)objectResult;
+      return String.format("%s,%s",
+          game.getSupportedEntityTypeToName().get(entity.getType()),
+          entity.getUniqueId().toString());
     }
     throw new RuntimeException(String.format(
         "not sure how to serialize %s %s",

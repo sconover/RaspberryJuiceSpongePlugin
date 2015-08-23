@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,7 +30,6 @@ import org.spongepowered.api.block.IntegerPropertyInfo;
 import org.spongepowered.api.block.PropertyInfo;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.EntityType;
-import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
@@ -943,26 +941,22 @@ public class OriginalApiTest extends InWorldTestSupport {
 
     List allLiving = new ArrayList();
 
-    Field[] fields = EntityTypes.class.getDeclaredFields();
-    for (Field f: fields) {
-      System.out.println(f.getName());
-      Object value = f.get(EntityTypes.class);
-      if (value != null) {
-        EntityType entityType = (EntityType) value;
-        if (net.minecraft.entity.EntityLiving.class.isAssignableFrom(entityType.getEntityClass())) {
-          Living entityLiving = (Living)getGameWrapper().tryToSpawnEntity(entityType, p).get();
+    for (Map.Entry<String,EntityType> entry:
+        getGameWrapper().getSupportedNameToEntityType().entrySet()) {
+      String entityTypeName = entry.getKey();
+      EntityType entityType = entry.getValue();
 
-          LivingGson livingGson = new LivingGson();
-          livingGson.name = f.getName().toLowerCase();
-          livingGson.tasks = entityLiving.getTaskNames();
+      Living entityLiving = (Living)getGameWrapper().tryToSpawnEntity(entityType, p).get();
 
-          allLiving.add(livingGson);
-        }
-      }
+      LivingGson livingGson = new LivingGson();
+      livingGson.name = entityTypeName;
+      livingGson.tasks = entityLiving.getTaskNames();
+
+      allLiving.add(livingGson);
     }
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    //System.out.println(gson.toJson(allLiving));
+    System.out.println(gson.toJson(allLiving));
   }
 
   static class LivingGson {

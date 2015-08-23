@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.InWorldTestSupport;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.util.List;
@@ -15,12 +16,15 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.world.Location;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForBlockType;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getIntegerIdForColor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class V2ApiTest extends InWorldTestSupport {
 
@@ -195,4 +199,28 @@ public class V2ApiTest extends InWorldTestSupport {
         getColorForIntegerId(DataHelper.getData(block2.getBlock())));
   }
 
+  @Test
+  public void test_v2_entity_spawn() throws Exception {
+    Vector3i p = nextTestPosition("v2.entity.spawn");
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.entity.spawn(%d,%d,%d,ocelot)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    assertEquals(1, getTestOut().sends.size());
+    String[] resultParts = getTestOut().sends.get(0).split(",");
+
+    String entityTypeName = resultParts[0];
+    assertEquals("ocelot", entityTypeName);
+
+    String ocelotUuid = resultParts[1];
+
+    Optional<Entity> maybeEntity = getGameWrapper().getEntityByUuid(ocelotUuid);
+    assertTrue(maybeEntity.isPresent());
+    Entity entity = maybeEntity.get();
+    assertEquals(p, entity.getLocation().getBlockPosition());
+    assertEquals(EntityTypes.OCELOT, entity.getType());
+  }
 }

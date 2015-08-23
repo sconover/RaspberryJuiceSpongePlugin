@@ -4,9 +4,12 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 
@@ -58,5 +61,17 @@ public class V2Api {
         new Vector3i(x2, y2, z2))
         .fetchBlocks(gameWrapper)
         .changeBlocksToTypeWithProperties(blockType, propertyNameToValue);
+  }
+
+  @RPC("v2.entity.spawn")
+  public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName) {
+    EntityType entityType = gameWrapper.supportedEntityTypeForName(entityTypeName);
+    Optional<Entity> maybeEntity =
+        gameWrapper.tryToSpawnEntity(entityType, new Vector3i(x, y, z));
+    if (maybeEntity.isPresent()) {
+      return maybeEntity.get();
+    } else {
+      return null;
+    }
   }
 }
