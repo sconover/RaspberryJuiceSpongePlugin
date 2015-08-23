@@ -111,10 +111,14 @@ public class GameWrapper {
   }
 
   public Player getPlayerByName(String playerName) {
-    Optional<Player> playerOptional = game.getServer().getPlayer(playerName);
+    Optional<Player> playerOptional = maybeGetPlayerByName(playerName);
     checkState(playerOptional.isPresent(),
         String.format("no player found with name '%s'", playerName));
     return playerOptional.get();
+  }
+
+  public Optional<Player> maybeGetPlayerByName(String playerName) {
+    return game.getServer().getPlayer(playerName);
   }
 
   public Location getLocation(Vector3i position) {

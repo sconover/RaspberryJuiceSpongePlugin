@@ -6,10 +6,14 @@ import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
 import com.google.common.base.Optional;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.animal.CanBeOwned;
+import org.spongepowered.api.entity.player.Player;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 
@@ -65,11 +69,34 @@ public class V2Api {
 
   @RPC("v2.entity.spawn")
   public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName) {
+    return v2_entity_spawn(x, y, z, entityTypeName, new LinkedHashMap<String,String>());
+  }
+
+  @RPC("v2.entity.spawn")
+  public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName,
+      Map<String,String> propertyNameToValue) {
     EntityType entityType = gameWrapper.supportedEntityTypeForName(entityTypeName);
     Optional<Entity> maybeEntity =
         gameWrapper.tryToSpawnEntity(entityType, new Vector3i(x, y, z));
     if (maybeEntity.isPresent()) {
-      return maybeEntity.get();
+      Entity entity = maybeEntity.get();
+
+      if (entity instanceof CanBeOwned &&
+          propertyNameToValue.containsKey("owner")) {
+
+        Optional<Player> maybePlayer = gameWrapper.maybeGetPlayerByName(propertyNameToValue.get("owner"));
+        if (maybePlayer.isPresent()) {
+          ((CanBeOwned)entity).setOwnerId(((Living)maybePlayer.get()).getUniqueId().toString());
+        } else {
+          Optional<Entity> maybeOwner = gameWrapper.getEntityByUuid(propertyNameToValue.get("owner"));
+          // consider logging a warning if owner is missing
+          if (maybeOwner.isPresent()) {
+            ((CanBeOwned)entity).setOwnerId(((Living)maybeOwner.get()).getUniqueId().toString());
+          }
+        }
+      }
+
+      return entity;
     } else {
       return null;
     }

@@ -18,6 +18,7 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.living.animal.Ocelot;
 import org.spongepowered.api.world.Location;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getColorForIntegerId;
@@ -222,5 +223,34 @@ public class V2ApiTest extends InWorldTestSupport {
     Entity entity = maybeEntity.get();
     assertEquals(p, entity.getLocation().getBlockPosition());
     assertEquals(EntityTypes.OCELOT, entity.getType());
+  }
+
+  @Test
+  public void test_v2_entity_spawn__and_set_owner() throws Exception {
+    Vector3i p = nextTestPosition("v2.entity.spawn");
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.entity.spawn(%d,%d,%d,ocelot)",
+            p.getX(),
+            p.getY(),
+            p.getZ()));
+
+    assertEquals(1, getTestOut().sends.size());
+    String[] resultParts = getTestOut().sends.get(0).split(",");
+    String ocelotUuid1 = resultParts[1];
+
+    getApiInvocationHandler().handleLine(
+        String.format("v2.entity.spawn(%d,%d,%d,ocelot,owner=%s)",
+            p.getX(),
+            p.getY(),
+            p.getZ(),
+            ocelotUuid1));
+
+    assertEquals(2, getTestOut().sends.size());
+    resultParts = getTestOut().sends.get(1).split(",");
+    String ocelotUuid2 = resultParts[1];
+
+    Ocelot ocelot = (Ocelot)getGameWrapper().getEntityByUuid(ocelotUuid2).get();
+    assertEquals(ocelotUuid1, ocelot.getOwnerId());
   }
 }
