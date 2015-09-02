@@ -214,7 +214,7 @@ public class V2ApiTest extends InWorldTestSupport {
             p.getZ()));
 
     assertEquals(1, getTestOut().sends.size());
-    String[] resultParts = getTestOut().sends.get(0).split(",");
+    String[] resultParts = getTestOut().sends.get(0).split(":");
 
     String entityTypeName = resultParts[0];
     assertEquals("ocelot", entityTypeName);

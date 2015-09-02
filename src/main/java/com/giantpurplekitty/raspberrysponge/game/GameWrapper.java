@@ -48,7 +48,8 @@ public class GameWrapper {
         Object value = f.get(EntityTypes.class);
         if (value != null) {
           EntityType entityType = (EntityType) value;
-          if (net.minecraft.entity.EntityLiving.class.isAssignableFrom(entityType.getEntityClass())) {
+
+          if (extendsEntityLiving(entityType.getEntityClass())) {
             nameToEntityType.put(f.getName().toLowerCase(), entityType);
             entityTypeToName.put(entityType, f.getName().toLowerCase());
           }
@@ -57,6 +58,17 @@ public class GameWrapper {
     } catch (IllegalAccessException e) {
       throw Throwables.propagate(e);
     }
+  }
+
+  private static boolean extendsEntityLiving(Class c) {
+    while (c != null) {
+      if (c.getName().equals("net.minecraft.entity.EntityLiving")) {
+        return true;
+      } else {
+        c = c.getSuperclass();
+      }
+    }
+    return false;
   }
 
   public static Entity getEntityById(GameWrapper gameWrapper, int entityId) {
