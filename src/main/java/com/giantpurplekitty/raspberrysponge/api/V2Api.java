@@ -19,6 +19,7 @@ import org.spongepowered.api.entity.player.Player;
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 
 public class V2Api {
+  public static final Vector3i ORIGIN = new Vector3i(0, 0, 0);
   private final GameWrapper gameWrapper;
 
   public V2Api(GameWrapper gameWrapper) {
@@ -61,7 +62,7 @@ public class V2Api {
 
     //TODO: test check property values, w/ test(s)
 
-    CuboidReference.relativeTo(gameWrapper.getSpawnPosition(),
+    CuboidReference.relativeTo(ORIGIN,
         new Vector3i(x1, y1, z1),
         new Vector3i(x2, y2, z2))
         .fetchBlocks(gameWrapper)
