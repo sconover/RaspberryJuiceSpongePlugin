@@ -69,6 +69,11 @@ public class V2Api {
         .changeBlocksToTypeWithProperties(blockType, propertyNameToValue);
   }
 
+  @RPC("v2.player.getTile")
+  public Vector3i v2_player_getTile(String playerName) {
+    return gameWrapper.getPlayerByName(playerName).getLocation().getBlockPosition();
+  }
+
   @RPC("v2.entity.spawn")
   public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName) {
     return v2_entity_spawn(x, y, z, entityTypeName, new LinkedHashMap<String,String>());

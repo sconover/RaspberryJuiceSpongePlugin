@@ -6,6 +6,7 @@ import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.DataHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.List;
@@ -202,6 +203,41 @@ public class V2ApiTest extends InWorldTestSupport {
         DyeColors.LIME.getColor(),
         getColorForIntegerId(DataHelper.getData(block2.getBlock())));
   }
+
+  @Test
+  public void test_v2_player_getTile() throws Exception {
+    if (shouldRunBecausePlayerIsLoggedIntoGame()) {
+
+      Vector3i p = nextTestPosition("v2.player.getTile");
+
+      // when name is blank, default to first player
+
+      getApiInvocationHandler().handleRawInvocation(
+          String.format("v2.player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      String expected = String.format("%d,%d,%d",
+          p.getX(),
+          p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+          p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
+
+      assertEquals(Lists.newArrayList(expected), getTestOut().sends);
+
+      // result is NOT relative to player origin
+
+      setUpAtPlayerOrigin(new Vector3i(3, 3, 3));
+
+      getApiInvocationHandler().handleRawInvocation(
+          String.format("v2.player.getTile(%s)", getGameWrapper().getFirstPlayer().getName()));
+
+      expected = String.format("%d,%d,%d",
+          p.getX(),
+          p.getY() + PLAYER_PLACEMENT_Y_OFFSET,
+          p.getZ() + PLAYER_PLACEMENT_Z_OFFSET);
+
+      assertEquals(Lists.newArrayList(expected), getTestOut().sends);
+    }
+  }
+
 
   @Test
   public void test_v2_entity_spawn() throws Exception {
