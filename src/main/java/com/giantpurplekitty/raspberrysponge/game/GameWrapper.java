@@ -103,7 +103,8 @@ public class GameWrapper {
   }
 
   public Vector3i getSpawnPosition() {
-    return world.getSpawnLocation().getBlockPosition();
+    //return world.getSpawnLocation().getBlockPosition();
+    return Vector3i.ZERO;
   }
 
   public void setSpawnPosition(Vector3i position) {
