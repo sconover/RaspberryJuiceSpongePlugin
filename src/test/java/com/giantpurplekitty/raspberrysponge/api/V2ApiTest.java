@@ -178,30 +178,25 @@ public class V2ApiTest extends InWorldTestSupport {
   public void test_v2_world_getBlock() throws Exception {
     Vector3i p = nextTestPosition("v2.world.getBlock");
 
+    CuboidReference.relativeTo(p,
+            new Vector3i(1, 1, 1),
+            new Vector3i(1, 1, 1))
+            .fetchBlocks(getGameWrapper())
+            .changeBlocksToTypeWithProperties(
+                    BlockTypes.PISTON,
+                    ImmutableMap.of("extended", "false", "facing", "west"));
+
     getApiInvocationHandler().handleRawInvocation(
-        String.format("v2.world.setBlock(%d,%d,%d,redstone_block)",
-            p.getX(),
-            p.getY(),
-            p.getZ()));
+        String.format("v2.world.getBlock(%d,%d,%d)",
+            p.getX()+1,
+            p.getY()+1,
+            p.getZ()+1));
 
-    Location block = getGameWrapper().getLocation(p);
-    assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
-
-    getApiInvocationHandler().handleRawInvocation(
-        String.format("v2.world.setBlock(%d,%d,%d,wool,color=lime)",
-            p.getX() + 1,
-            p.getY(),
-            p.getZ()));
-
-    Location block2 = getGameWrapper().getLocation(
-        p.getX() + 1,
-        p.getY(),
-        p.getZ());
-
-    assertEquals(BlockTypes.WOOL, block2.getBlockType());
-    assertEquals(
-        DyeColors.LIME.getColor(),
-        getColorForIntegerId(DataHelper.getData(block2.getBlock())));
+    assertEquals(1, getTestOut().sends.size());
+    assertEquals(String.format("%d,%d,%d,piston,extended=false;facing=west",
+            p.getX()+1,
+            p.getY()+1,
+            p.getZ()+1), getTestOut().sends.get(0));
   }
 
   @Test

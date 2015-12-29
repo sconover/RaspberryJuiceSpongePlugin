@@ -15,6 +15,7 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.animal.CanBeOwned;
 import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.world.Location;
 
 import static com.giantpurplekitty.raspberrysponge.game.TypeMappings.getBlockTypeForName;
 
@@ -67,6 +68,15 @@ public class V2Api {
         new Vector3i(x2, y2, z2))
         .fetchBlocks(gameWrapper)
         .changeBlocksToTypeWithProperties(blockType, propertyNameToValue);
+  }
+
+  @RPC("v2.world.getBlock")
+  public Location v2_world_getBlock(int x, int y, int z) {
+    return CuboidReference.relativeTo(ORIGIN,
+            new Vector3i(x, y, z),
+            new Vector3i(x, y, z))
+            .fetchBlocks(gameWrapper)
+            .firstBlock();
   }
 
   @RPC("v2.player.getTile")
