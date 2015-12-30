@@ -200,6 +200,32 @@ public class V2ApiTest extends InWorldTestSupport {
   }
 
   @Test
+  public void test_v2_world_getThenSetBlock() throws Exception {
+    Vector3i p = nextTestPosition("v2.world.getThenSetBlock");
+
+    CuboidReference.relativeTo(p, new Vector3i(0,0,0), new Vector3i(0,0,0))
+            .fetchBlocks(getGameWrapper())
+            .changeBlocksToTypeWithProperties(
+                    BlockTypes.PISTON,
+                    ImmutableMap.of("extended", "false", "facing", "west"));
+
+    getApiInvocationHandler().handleRawInvocation(
+            String.format("v2.world.getThenSetBlock(%d,%d,%d,redstone_block)",
+                    p.getX(),
+                    p.getY(),
+                    p.getZ()));
+
+    assertEquals(1, getTestOut().sends.size());
+    assertEquals(String.format("%d,%d,%d,piston,extended=false;facing=west",
+            p.getX(),
+            p.getY(),
+            p.getZ()), getTestOut().sends.get(0));
+
+    Location block = getGameWrapper().getLocation(p);
+    assertEquals(BlockTypes.REDSTONE_BLOCK, block.getBlockType());
+  }
+
+  @Test
   public void test_v2_player_getTile() throws Exception {
     if (shouldRunBecausePlayerIsLoggedIntoGame()) {
 

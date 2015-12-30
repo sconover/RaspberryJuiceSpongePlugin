@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.dispatch.RPC;
 import com.giantpurplekitty.raspberrysponge.game.CuboidReference;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import com.giantpurplekitty.raspberrysponge.game.LocationSnapshot;
 import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class V2Api {
   @RPC("v2.world.setBlock")
   public void v2_world_setBlock(
       int x, int y, int z,
-      String blockTypeName, Map<String,String> propertyNameToValue) {
+      String blockTypeName, Map<String, String> propertyNameToValue) {
     v2_world_setBlocks(
         x, y, z,
         x, y, z,
@@ -57,7 +58,7 @@ public class V2Api {
   public void v2_world_setBlocks(
       int x1, int y1, int z1,
       int x2, int y2, int z2,
-      String blockTypeName, Map<String,String> propertyNameToValue) {
+      String blockTypeName, Map<String, String> propertyNameToValue) {
 
     BlockType blockType = getBlockTypeForName("minecraft:" + blockTypeName);
 
@@ -71,12 +72,27 @@ public class V2Api {
   }
 
   @RPC("v2.world.getBlock")
-  public Location v2_world_getBlock(int x, int y, int z) {
-    return CuboidReference.relativeTo(ORIGIN,
+  public LocationSnapshot v2_world_getBlock(int x, int y, int z) {
+    return LocationSnapshot.of(
+        CuboidReference.relativeTo(ORIGIN,
             new Vector3i(x, y, z),
             new Vector3i(x, y, z))
             .fetchBlocks(gameWrapper)
-            .firstBlock();
+            .firstBlock());
+  }
+
+  @RPC("v2.world.getThenSetBlock")
+  public LocationSnapshot v2_world_getThenSetBlock(int x, int y, int z, String blockTypeName) {
+    return v2_world_getThenSetBlock(x, y, z, blockTypeName, new HashMap<String, String>());
+  }
+
+  @RPC("v2.world.getThenSetBlock")
+  public LocationSnapshot v2_world_getThenSetBlock(int x, int y, int z,
+      String blockTypeName, Map<String, String> propertyNameToValue) {
+
+    LocationSnapshot blockThatWasThereBefore = v2_world_getBlock(x, y, z);
+    v2_world_setBlock(x, y, z, blockTypeName, propertyNameToValue);
+    return blockThatWasThereBefore;
   }
 
   @RPC("v2.player.getTile")
@@ -86,12 +102,12 @@ public class V2Api {
 
   @RPC("v2.entity.spawn")
   public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName) {
-    return v2_entity_spawn(x, y, z, entityTypeName, new LinkedHashMap<String,String>());
+    return v2_entity_spawn(x, y, z, entityTypeName, new LinkedHashMap<String, String>());
   }
 
   @RPC("v2.entity.spawn")
   public Entity v2_entity_spawn(int x, int y, int z, String entityTypeName,
-      Map<String,String> propertyNameToValue) {
+      Map<String, String> propertyNameToValue) {
     EntityType entityType = gameWrapper.supportedEntityTypeForName(entityTypeName);
     Optional<Entity> maybeEntity =
         gameWrapper.tryToSpawnEntity(entityType, new Vector3i(x, y, z));
@@ -101,14 +117,16 @@ public class V2Api {
       if (entity instanceof CanBeOwned &&
           propertyNameToValue.containsKey("owner")) {
 
-        Optional<Player> maybePlayer = gameWrapper.maybeGetPlayerByName(propertyNameToValue.get("owner"));
+        Optional<Player> maybePlayer =
+            gameWrapper.maybeGetPlayerByName(propertyNameToValue.get("owner"));
         if (maybePlayer.isPresent()) {
-          ((CanBeOwned)entity).setOwnerId(((Living)maybePlayer.get()).getUniqueId().toString());
+          ((CanBeOwned) entity).setOwnerId(((Living) maybePlayer.get()).getUniqueId().toString());
         } else {
-          Optional<Entity> maybeOwner = gameWrapper.getEntityByUuid(propertyNameToValue.get("owner"));
+          Optional<Entity> maybeOwner =
+              gameWrapper.getEntityByUuid(propertyNameToValue.get("owner"));
           // consider logging a warning if owner is missing
           if (maybeOwner.isPresent()) {
-            ((CanBeOwned)entity).setOwnerId(((Living)maybeOwner.get()).getUniqueId().toString());
+            ((CanBeOwned) entity).setOwnerId(((Living) maybeOwner.get()).getUniqueId().toString());
           }
         }
       }
@@ -121,20 +139,21 @@ public class V2Api {
 
   @RPC("v2.entity.living.startTask")
   public void v2_entity_living_startTask(String entityUuid, String taskName) {
-    ((Living)gameWrapper.getEntityByUuid(entityUuid).get()).startTask(taskName);
+    ((Living) gameWrapper.getEntityByUuid(entityUuid).get()).startTask(taskName);
   }
 
   @RPC("v2.entity.living.resetTask")
   public void v2_entity_living_resetTask(String entityUuid, String taskName) {
-    ((Living)gameWrapper.getEntityByUuid(entityUuid).get()).resetTask(taskName);
+    ((Living) gameWrapper.getEntityByUuid(entityUuid).get()).resetTask(taskName);
   }
 
   @RPC("v2.entity.getAllInBoundingCube")
   public Entity[] v2_entity_getAllInBoundingCube(
       int x1, int y1, int z1,
       int x2, int y2, int z2) {
-    Collection<Entity> entities = CuboidReference.fromCorners(new Vector3i(x1, y1, z1), new Vector3i(x2, y2, z2))
-          .fetchEntities(gameWrapper);
+    Collection<Entity> entities =
+        CuboidReference.fromCorners(new Vector3i(x1, y1, z1), new Vector3i(x2, y2, z2))
+            .fetchEntities(gameWrapper);
     return entities.toArray(new Entity[entities.size()]);
   }
 }

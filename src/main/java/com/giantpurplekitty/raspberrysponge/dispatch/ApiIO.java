@@ -4,6 +4,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.giantpurplekitty.raspberrysponge.api.OriginalApi;
 import com.giantpurplekitty.raspberrysponge.game.GameWrapper;
+import com.giantpurplekitty.raspberrysponge.game.LocationSnapshot;
 import com.giantpurplekitty.raspberrysponge.game.TypeMappings;
 import com.google.common.base.Joiner;
 import java.lang.reflect.Method;
@@ -81,25 +82,9 @@ public class ApiIO {
     } else if (objectResult instanceof Vector3d) {
       Vector3d v = ((Vector3d) objectResult);
       return String.format("%.1f,%.1f,%.1f", v.getX(), v.getY(), v.getZ());
-    } else if (objectResult instanceof Location) {
-      Location block = ((Location) objectResult);
-
-      //ex: "10,10,10,piston,extended=false;facing=west"
-      String result = String.format("%d,%d,%d,%s",
-              block.getBlockX(),
-              block.getBlockY(),
-              block.getBlockZ(),
-              block.getBlockType().getName().replace("minecraft:", ""));
-      Map<String, Object> blockProperties = block.getBlock().getPrimitiveProperties();
-      if (!blockProperties.isEmpty()) {
-        List<String> kvEntries = new ArrayList<String>();
-        TreeMap<String, Object> sortedMap = new TreeMap<String, Object>(blockProperties);
-        for (Map.Entry<String,Object> entry : sortedMap.entrySet()) {
-          kvEntries.add(entry.getKey() + "=" + entry.getValue().toString());
-        }
-        result += "," + Joiner.on(";").join(kvEntries);
-      }
-      return result;
+    } else if (objectResult instanceof LocationSnapshot) {
+      LocationSnapshot locationSnapshot = ((LocationSnapshot) objectResult);
+      return locationSnapshot.toApiResultString();
     } else if (objectResult instanceof Float) {
       return String.valueOf((Float) objectResult);
     } else if (objectResult instanceof Integer) {
